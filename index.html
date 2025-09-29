@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snap & Snap 📷</title>
+    <title>Snap & Snap 📷 Pro</title>
     
     <!-- 1. Impor Font Pixel dari Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,39 +19,42 @@
 
         <!-- 1. TAMPILAN AWAL -->
         <div id="start-screen">
-            <h1>📷 Snap & Snap</h1>
-            <button id="start-btn">Mulai!</button>
+            <h1>📷 Snap & Snap Pro</h1>
+            <button id="start-btn">Mulai Petualangan!</button>
+            <p class="tip">Pastikan Anda mengizinkan akses kamera.</p>
         </div>
 
         <!-- 2. UI PHOTOBOX UTAMA (Awalnya tersembunyi) -->
         <div id="photobox-ui">
-            <div class="photobooth">
-                <!-- Stream kamera akan ditampilkan di sini -->
-                <video id="video" autoplay playsinline></video>
-                <!-- Foto, template, dan efek digambar di sini -->
-                <canvas id="canvas"></canvas>
-                <!-- Overlay untuk efek animasi CSS -->
-                <div id="effect-overlay" class="effect-overlay"></div>
+            <div class="photobooth-area">
+                <div class="photobooth">
+                    <!-- Stream kamera akan ditampilkan di sini -->
+                    <video id="video" autoplay playsinline muted></video>
+                    <!-- Foto, template, dan efek digambar di sini -->
+                    <canvas id="canvas"></canvas>
+                    <!-- Overlay untuk efek animasi CSS -->
+                    <div id="effect-overlay" class="effect-overlay"></div>
+                </div>
             </div>
-
+            
             <div class="controls">
-                <!-- Tombol utama untuk mengambil foto -->
-                <button id="snap">Ambil Foto!</button>
+                
+                <!-- Tombol Utama -->
+                <button id="snap">AMBIL FOTO!</button>
 
                 <!-- Pilihan Template/Frame -->
                 <div class="options-group">
                     <h3>Pilih Template</h3>
-                    <button class="template-btn active" data-template="none">Tanpa Frame</button>
-                    <!-- Perhatikan path folder assets/ di sini -->
+                    <button class="template-btn active" data-template="none">None</button>
                     <button class="template-btn" data-template="assets/polaroid.png">Polaroid</button>
-                    <button class="template-btn" data-template="assets/retro.png">Retro</button>
+                    <button class="template-btn" data-template="assets/retro.png">Retro Film</button>
                 </div>
                 
                 <!-- Pilihan Efek Statis (Filter CSS) -->
                 <div class="options-group">
                     <h3>Efek Statis</h3>
                     <button class="static-effect-btn active" data-effect="none">Normal</button>
-                    <button class="static-effect-btn" data-effect="grayscale(100%)">Grayscale</button>
+                    <button class="static-effect-btn" data-effect="grayscale(100%)">B&W</button>
                     <button class="static-effect-btn" data-effect="sepia(100%)">Sepia</button>
                     <button class="static-effect-btn" data-effect="invert(100%)">Invert</button>
                 </div>
@@ -59,32 +62,34 @@
                 <!-- Pilihan Efek Gerak (Animasi CSS & SVG) -->
                 <div class="options-group">
                     <h3>Efek Gerak</h3>
-                    <button class="motion-effect-btn active" data-effect="none">Tanpa Efek</button>
+                    <button class="motion-effect-btn active" data-effect="none">None</button>
                     <button class="motion-effect-btn" data-effect="glow">Glow</button>
                     <button class="motion-effect-btn" data-effect="glitch">Glitch</button>
                     <button class="motion-effect-btn" data-effect="wave">Wave</button>
                 </div>
 
-                <!-- Kontrol untuk membuat GIF -->
-                <div class="options-group">
-                    <h3>Buat GIF Stop-Motion</h3>
+                <!-- Kontrol Download & GIF -->
+                <div class="options-group action-group">
                     <div class="gif-controls">
-                        <button id="add-to-gif">Tambah Frame</button>
+                        <button id="add-to-gif">Tambah Frame (Max 4)</button>
                         <span id="gif-status">0/4 Frame</span>
-                        <button id="create-gif">Buat GIF!</button>
+                    </div>
+                    <button id="create-gif">Buat & Simpan GIF!</button>
+                    
+                    <div class="download-area">
+                        <a id="download-link" class="download-btn" style="display: none;" download="snap-n-snap.png">Download Foto</a>
+                        <button id="reset-btn" style="display: none;">Mulai Ulang</button>
                     </div>
                 </div>
 
-                <!-- Tombol Download -->
-                <a id="download-link" class="download-btn" style="display: none;" download="snap-n-snap.png">Download Foto</a>
+                <!-- Tempat untuk menampilkan hasil GIF -->
+                <img id="gif-result" src="" alt="Hasil GIF" style="display: none;">
             </div>
             
-            <!-- Tempat untuk menampilkan hasil GIF -->
-            <img id="gif-result" src="" alt="Hasil GIF" style="display: none;">
         </div>
     </div>
     
-    <!-- Filter SVG untuk Efek Wave/Gelombang (Harus tetap di HTML) -->
+    <!-- Filter SVG untuk Efek Wave/Gelombang -->
     <svg class="hidden-svg">
         <filter id="wave-filter">
             <feTurbulence baseFrequency="0.02 0.05" numOctaves="3" result="turbulence" seed="2">
