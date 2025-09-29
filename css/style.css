@@ -23,55 +23,62 @@ body {
     align-items: center;
     min-height: 100vh;
     padding: 20px;
+    transition: all 0.5s ease-in-out;
 }
 
-/* === CONTAINER UTAMA === */
+/* --- Mode Default: Portrait / Mobile --- */
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
-}
-
-/* === TAMPILAN AWAL (START SCREEN) === */
-#start-screen {
-    text-align: center;
+    width: 100%;
+    max-width: 650px;
 }
 
 #start-screen h1 {
-    font-size: 3rem;
+    font-size: 2rem;
     color: var(--yellow-pixel);
     text-shadow: 4px 4px 0 var(--magenta-neon);
     margin-bottom: 30px;
 }
+.tip {
+    font-size: 0.5rem;
+    margin-top: 10px;
+    color: var(--green-neon);
+}
 
-/* === AREA PHOTOBOX UTAMA === */
+/* === AREA PHOTOBOX UTAMA (PORTRAIT) === */
 #photobox-ui {
-    display: none; /* Awalnya disembunyikan */
+    display: none; 
     flex-direction: column;
     align-items: center;
     gap: 20px;
 }
 
+.photobooth-area {
+    width: 100%;
+    max-width: 600px; /* Lebar maksimum untuk booth */
+}
+
 .photobooth {
     position: relative;
-    width: 600px; /* Lebar untuk rasio 3:4 */
-    height: 800px; /* Tinggi untuk rasio 3:4 */
+    /* Rasio Portrait: 3:4 */
+    width: 100%; 
+    padding-top: 133.33%; /* (800/600) * 100% */
     border: 8px solid var(--cyan-neon);
     box-shadow: 0 0 15px var(--cyan-neon), 6px 6px 0 var(--magenta-neon);
     background-color: #000;
     overflow: hidden;
 }
 
-/* Mengatur agar video dan canvas tumpang tindih */
-.photobooth video, .photobooth canvas {
+.photobooth video, .photobooth canvas, .effect-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* Membuat gambar terlihat pixelated saat di-render */
     image-rendering: pixelated; 
 }
 
@@ -79,12 +86,14 @@ body {
     z-index: 10;
 }
 
+
 /* === KONTROL & TOMBOL === */
 .controls {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    width: 600px;
+    width: 100%;
+    max-width: 600px;
 }
 
 .options-group {
@@ -96,14 +105,7 @@ body {
     justify-content: center;
 }
 
-.options-group h3 {
-    width: 100%;
-    text-align: center;
-    color: var(--yellow-pixel);
-    margin-bottom: 5px;
-    font-size: 0.8rem;
-}
-
+/* ... (Semua gaya tombol, span, dll. tetap sama) ... */
 button, .download-btn {
     font-family: 'Press Start 2P', cursive;
     background-color: var(--bg-dark);
@@ -115,6 +117,7 @@ button, .download-btn {
     transition: all 0.2s;
     text-decoration: none;
     display: inline-block;
+    font-size: 0.6rem; /* Kecilkan font di mobile */
 }
 
 button:hover, .download-btn:hover {
@@ -135,8 +138,8 @@ button.active {
     color: white;
     border-color: var(--magenta-neon);
     width: 100%;
-    padding: 20px;
-    font-size: 1.5rem;
+    padding: 15px;
+    font-size: 1.2rem;
 }
 
 #snap:hover {
@@ -149,10 +152,29 @@ button.active {
     display: flex;
     gap: 10px;
     align-items: center;
+    width: 100%;
 }
-
+#add-to-gif, #create-gif {
+    flex-grow: 1;
+    font-size: 0.5rem;
+}
 #gif-status {
     color: var(--green-neon);
+    flex-basis: 100px;
+    text-align: center;
+    font-size: 0.5rem;
+}
+
+.action-group {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.download-area {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+}
+.download-btn, #reset-btn {
     flex-grow: 1;
     text-align: center;
 }
@@ -161,9 +183,13 @@ button.active {
 .effect-overlay {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; /* Agar tidak menghalangi klik */
+    pointer-events: none;
     z-index: 20;
+    transition: box-shadow 0.5s; /* Tambah transisi untuk glow */
 }
+
+/* Glow, Glitch, Wave styles remain the same */
+/* ... (copy definitions for glow, glitch, wave from previous file) ... */
 
 /* Efek Glow */
 .glow {
@@ -221,6 +247,76 @@ button.active {
 #gif-result {
     margin-top: 20px;
     border: 4px solid var(--green-neon);
-    max-width: 300px;
-    display: none;
+    max-width: 100%; /* Agar masuk di mobile */
+    height: auto;
+}
+
+
+/* === MEDIA QUERY: LANDSCAPE / DESKTOP MODE === */
+@media (min-width: 850px) {
+    
+    body {
+        padding: 40px;
+    }
+    
+    .container {
+        flex-direction: row; /* Ubah menjadi horizontal */
+        align-items: flex-start;
+        max-width: 1200px;
+    }
+    
+    /* PHOTOBOX UI */
+    #photobox-ui {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 40px;
+    }
+
+    .photobooth-area {
+        width: 600px; /* Tetapkan lebar absolut untuk booth */
+    }
+
+    .photobooth {
+        /* Tetapkan tinggi dan lebar spesifik untuk landscape */
+        width: 600px; 
+        height: 800px; /* Tinggi tetap untuk rasio potret */
+        padding-top: 0; /* Hapus padding top */
+    }
+
+    /* CONTROLS */
+    .controls {
+        width: auto; /* Biarkan lebar menyesuaikan konten */
+        min-width: 350px;
+    }
+    
+    .options-group {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .options-group h3 {
+        font-size: 0.9rem;
+    }
+
+    .options-group button {
+        width: 80%; /* Tombol lebih lebar di desktop */
+        font-size: 0.7rem;
+    }
+    
+    #snap {
+        font-size: 1.5rem;
+        padding: 20px;
+    }
+    
+    .gif-controls {
+        flex-direction: column;
+    }
+    
+    #gif-status {
+        order: -1; /* Posisikan status di atas tombol GIF */
+    }
+    
+    .download-area {
+        flex-direction: row;
+    }
 }
