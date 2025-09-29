@@ -1,0 +1,226 @@
+/* === PALET WARNA ARCADE RETRO === */
+:root {
+    --bg-dark: #0D0D0D;
+    --cyan-neon: #00E5FF;
+    --magenta-neon: #FF007F;
+    --yellow-pixel: #FFE600;
+    --green-neon: #39FF14;
+}
+
+/* === GAYA DASAR & FONT === */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Press Start 2P', cursive;
+    background-color: var(--bg-dark);
+    color: var(--cyan-neon);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* === CONTAINER UTAMA === */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+/* === TAMPILAN AWAL (START SCREEN) === */
+#start-screen {
+    text-align: center;
+}
+
+#start-screen h1 {
+    font-size: 3rem;
+    color: var(--yellow-pixel);
+    text-shadow: 4px 4px 0 var(--magenta-neon);
+    margin-bottom: 30px;
+}
+
+/* === AREA PHOTOBOX UTAMA === */
+#photobox-ui {
+    display: none; /* Awalnya disembunyikan */
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.photobooth {
+    position: relative;
+    width: 600px; /* Lebar untuk rasio 3:4 */
+    height: 800px; /* Tinggi untuk rasio 3:4 */
+    border: 8px solid var(--cyan-neon);
+    box-shadow: 0 0 15px var(--cyan-neon), 6px 6px 0 var(--magenta-neon);
+    background-color: #000;
+    overflow: hidden;
+}
+
+/* Mengatur agar video dan canvas tumpang tindih */
+.photobooth video, .photobooth canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Membuat gambar terlihat pixelated saat di-render */
+    image-rendering: pixelated; 
+}
+
+.photobooth canvas {
+    z-index: 10;
+}
+
+/* === KONTROL & TOMBOL === */
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 600px;
+}
+
+.options-group {
+    border: 4px solid var(--yellow-pixel);
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.options-group h3 {
+    width: 100%;
+    text-align: center;
+    color: var(--yellow-pixel);
+    margin-bottom: 5px;
+    font-size: 0.8rem;
+}
+
+button, .download-btn {
+    font-family: 'Press Start 2P', cursive;
+    background-color: var(--bg-dark);
+    color: var(--cyan-neon);
+    border: 4px solid var(--cyan-neon);
+    padding: 10px 15px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+button:hover, .download-btn:hover {
+    background-color: var(--cyan-neon);
+    color: var(--bg-dark);
+    box-shadow: 4px 4px 0 var(--green-neon);
+    transform: translate(-2px, -2px);
+}
+
+button.active {
+    background-color: var(--magenta-neon);
+    color: var(--yellow-pixel);
+    border-color: var(--magenta-neon);
+}
+
+#snap {
+    background-color: var(--magenta-neon);
+    color: white;
+    border-color: var(--magenta-neon);
+    width: 100%;
+    padding: 20px;
+    font-size: 1.5rem;
+}
+
+#snap:hover {
+    background-color: var(--yellow-pixel);
+    color: var(--bg-dark);
+    border-color: var(--yellow-pixel);
+}
+
+.gif-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#gif-status {
+    color: var(--green-neon);
+    flex-grow: 1;
+    text-align: center;
+}
+
+/* === EFEK ANIMASI GERAK (CSS) === */
+.effect-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; /* Agar tidak menghalangi klik */
+    z-index: 20;
+}
+
+/* Efek Glow */
+.glow {
+    animation: neon-glow 1.5s ease-in-out infinite alternate;
+}
+@keyframes neon-glow {
+    from { box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px var(--cyan-neon), 0 0 40px var(--cyan-neon); }
+    to { box-shadow: 0 0 20px #fff, 0 0 30px #fff, 0 0 40px var(--magenta-neon), 0 0 50px var(--magenta-neon); }
+}
+
+/* Efek Glitch */
+.glitch {
+    animation: glitch-anim 1s infinite;
+}
+.glitch::before, .glitch::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    overflow: hidden;
+}
+.glitch::before {
+    left: 2px;
+    text-shadow: -2px 0 var(--magenta-neon);
+    animation: glitch-anim-2 1.5s infinite linear alternate-reverse;
+    clip-path: polygon(0 0, 100% 0, 100% 13%, 0 13%);
+}
+.glitch::after {
+    left: -2px;
+    text-shadow: -2px 0 var(--cyan-neon);
+    animation: glitch-anim-1 1.5s infinite linear alternate-reverse;
+    clip-path: polygon(0 80%, 100% 80%, 100% 100%, 0 100%);
+}
+
+@keyframes glitch-anim-1 { 0% { top: -5px; } 100% { top: 5px; } }
+@keyframes glitch-anim-2 { 0% { top: 5px; } 100% { top: -5px; } }
+
+/* Efek Gelombang (Wave) dengan SVG Filter */
+.wave {
+    filter: url(#wave-filter);
+}
+
+/* Elemen SVG disembunyikan */
+.hidden-svg {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+/* Tampilan hasil GIF */
+#gif-result {
+    margin-top: 20px;
+    border: 4px solid var(--green-neon);
+    max-width: 300px;
+    display: none;
+}
