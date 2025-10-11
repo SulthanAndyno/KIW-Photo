@@ -5,6 +5,7 @@
     --magenta-neon: #FF007F;
     --yellow-pixel: #FFE600;
     --green-neon: #39FF14;
+    --red-alert: #FF3333; /* Warna baru untuk error/peringatan */
 }
 
 /* === GAYA DASAR & FONT === */
@@ -15,7 +16,7 @@
 }
 
 body {
-    font-family: 'Press Start 2P', cursive;
+    font-family: 'Space Mono', monospace; /* Default font lebih readable */
     background-color: var(--bg-dark);
     color: var(--cyan-neon);
     display: flex;
@@ -23,7 +24,8 @@ body {
     align-items: center;
     min-height: 100vh;
     padding: 20px;
-    transition: all 0.5s ease-in-out;
+    transition: background-color 0.5s ease-in-out;
+    overflow-x: hidden; /* Mencegah scroll horizontal */
 }
 
 /* --- Mode Default: Portrait / Mobile --- */
@@ -34,17 +36,34 @@ body {
     gap: 20px;
     width: 100%;
     max-width: 650px;
+    padding: 10px;
+}
+
+#start-screen {
+    text-align: center;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
 }
 
 #start-screen h1 {
+    font-family: 'Press Start 2P', cursive;
     font-size: 2rem;
     color: var(--yellow-pixel);
     text-shadow: 4px 4px 0 var(--magenta-neon);
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
+
+.description {
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+    color: var(--cyan-neon);
+}
+
 .tip {
-    font-size: 0.5rem;
-    margin-top: 10px;
+    font-size: 0.6rem;
+    margin-top: 20px;
     color: var(--green-neon);
 }
 
@@ -54,38 +73,41 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 20px;
+    width: 100%;
 }
 
 .photobooth-area {
     width: 100%;
     max-width: 600px; /* Lebar maksimum untuk booth */
+    display: flex; /* Untuk memusatkan photobooth di dalamnya */
+    justify-content: center;
+    align-items: center;
 }
 
 .photobooth {
     position: relative;
-    /* Rasio Portrait: 3:4 */
-    width: 100%; 
-    padding-top: 133.33%; /* (800/600) * 100% */
+    width: 100%; /* Lebar penuh dari photobooth-area */
+    padding-bottom: 56.25%; /* Rasio 16:9 (9/16 * 100%) - default modern webcam */
+                               /* Jika ingin 4:3, pakai 75% */
+                               /* Jika ingin 3:4 portrait, pakai 133.33% */
+    height: 0; /* Penting untuk padding-bottom trick */
+    overflow: hidden;
     border: 8px solid var(--cyan-neon);
     box-shadow: 0 0 15px var(--cyan-neon), 6px 6px 0 var(--magenta-neon);
-    background-color: #000;
-    overflow: hidden;
+    background-color: #000; /* Latar belakang untuk pillarbox/letterbox */
+    transition: box-shadow 0.3s ease-in-out;
 }
 
-.photobooth video, .photobooth canvas, .effect-overlay {
+.photobooth video, .photobooth canvas {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    image-rendering: pixelated; 
+    object-fit: contain; /* Penting: agar video/canvas tidak terpotong */
+    image-rendering: pixelated; /* Memberikan efek retro pixel */
+    background-color: black; /* Warna latar belakang untuk area kosong jika object-fit: contain */
 }
-
-.photobooth canvas {
-    z-index: 10;
-}
-
 
 /* === KONTROL & TOMBOL === */
 .controls {
@@ -103,27 +125,43 @@ body {
     flex-wrap: wrap;
     gap: 10px;
     justify-content: center;
+    align-items: center;
+    position: relative;
+}
+.options-group h3 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7rem;
+    color: var(--green-neon);
+    width: 100%; /* Pastikan judul mengambil lebar penuh */
+    text-align: center;
+    margin-bottom: 5px;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
 }
 
-/* ... (Semua gaya tombol, span, dll. tetap sama) ... */
+
+/* --- Gaya Tombol Umum --- */
 button, .download-btn {
     font-family: 'Press Start 2P', cursive;
     background-color: var(--bg-dark);
     color: var(--cyan-neon);
-    border: 4px solid var(--cyan-neon);
-    padding: 10px 15px;
+    border: 3px solid var(--cyan-neon); /* Border lebih kecil */
+    padding: 8px 12px; /* Padding lebih kecil */
     cursor: pointer;
     text-transform: uppercase;
-    transition: all 0.2s;
+    transition: all 0.2s ease-in-out;
     text-decoration: none;
-    display: inline-block;
-    font-size: 0.6rem; /* Kecilkan font di mobile */
+    display: inline-flex; /* Menggunakan flexbox untuk alignment konten */
+    justify-content: center;
+    align-items: center;
+    font-size: 0.6rem; 
+    position: relative;
+    overflow: hidden; /* Untuk efek hover */
 }
 
 button:hover, .download-btn:hover {
     background-color: var(--cyan-neon);
     color: var(--bg-dark);
-    box-shadow: 4px 4px 0 var(--green-neon);
+    box-shadow: 0 0 10px var(--cyan-neon), 4px 4px 0 var(--green-neon);
     transform: translate(-2px, -2px);
 }
 
@@ -131,21 +169,43 @@ button.active {
     background-color: var(--magenta-neon);
     color: var(--yellow-pixel);
     border-color: var(--magenta-neon);
+    box-shadow: 0 0 10px var(--magenta-neon), 2px 2px 0 var(--yellow-pixel);
+}
+
+button.active:hover {
+    box-shadow: 0 0 15px var(--magenta-neon), 6px 6px 0 var(--yellow-pixel);
+}
+
+/* --- Tombol Utama (Snap, Start) --- */
+.main-btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 1rem;
+    border-width: 4px;
+}
+.main-btn:hover {
+    box-shadow: 0 0 15px var(--cyan-neon), 6px 6px 0 var(--green-neon);
 }
 
 #snap {
     background-color: var(--magenta-neon);
     color: white;
     border-color: var(--magenta-neon);
-    width: 100%;
-    padding: 15px;
     font-size: 1.2rem;
+    box-shadow: 0 0 10px var(--magenta-neon);
 }
 
 #snap:hover {
     background-color: var(--yellow-pixel);
     color: var(--bg-dark);
     border-color: var(--yellow-pixel);
+    box-shadow: 0 0 15px var(--yellow-pixel), 6px 6px 0 var(--magenta-neon);
+}
+
+.action-btn {
+    flex-grow: 1;
+    font-size: 0.5rem;
+    padding: 10px;
 }
 
 .gif-controls {
@@ -153,104 +213,71 @@ button.active {
     gap: 10px;
     align-items: center;
     width: 100%;
+    flex-wrap: wrap; /* Agar bisa wrap di mobile */
+    justify-content: center;
 }
 #add-to-gif, #create-gif {
-    flex-grow: 1;
-    font-size: 0.5rem;
+    flex-basis: 45%; /* Untuk rata dua kolom */
+    font-size: 0.6rem;
 }
 #gif-status {
     color: var(--green-neon);
-    flex-basis: 100px;
+    flex-basis: 100%; /* Ambil lebar penuh */
     text-align: center;
     font-size: 0.5rem;
+    margin-top: 5px;
 }
 
 .action-group {
-    flex-direction: row;
+    flex-direction: row; /* Kembali ke baris */
     flex-wrap: wrap;
 }
 .download-area {
     width: 100%;
     display: flex;
     gap: 10px;
+    margin-top: 10px; /* Jarak dari gif-controls */
 }
 .download-btn, #reset-btn {
     flex-grow: 1;
     text-align: center;
+    font-size: 0.6rem;
 }
 
-/* === EFEK ANIMASI GERAK (CSS) === */
-.effect-overlay {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 20;
-    transition: box-shadow 0.5s; /* Tambah transisi untuk glow */
+/* --- Spinner (Loading) --- */
+.spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 0.8s ease-in-out infinite;
+    margin-left: 8px;
 }
 
-/* Glow, Glitch, Wave styles remain the same */
-/* ... (copy definitions for glow, glitch, wave from previous file) ... */
-
-/* Efek Glow */
-.glow {
-    animation: neon-glow 1.5s ease-in-out infinite alternate;
-}
-@keyframes neon-glow {
-    from { box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px var(--cyan-neon), 0 0 40px var(--cyan-neon); }
-    to { box-shadow: 0 0 20px #fff, 0 0 30px #fff, 0 0 40px var(--magenta-neon), 0 0 50px var(--magenta-neon); }
-}
-
-/* Efek Glitch */
-.glitch {
-    animation: glitch-anim 1s infinite;
-}
-.glitch::before, .glitch::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: inherit;
-    overflow: hidden;
-}
-.glitch::before {
-    left: 2px;
-    text-shadow: -2px 0 var(--magenta-neon);
-    animation: glitch-anim-2 1.5s infinite linear alternate-reverse;
-    clip-path: polygon(0 0, 100% 0, 100% 13%, 0 13%);
-}
-.glitch::after {
-    left: -2px;
-    text-shadow: -2px 0 var(--cyan-neon);
-    animation: glitch-anim-1 1.5s infinite linear alternate-reverse;
-    clip-path: polygon(0 80%, 100% 80%, 100% 100%, 0 100%);
-}
-
-@keyframes glitch-anim-1 { 0% { top: -5px; } 100% { top: 5px; } }
-@keyframes glitch-anim-2 { 0% { top: 5px; } 100% { top: -5px; } }
-
-/* Efek Gelombang (Wave) dengan SVG Filter */
-.wave {
-    filter: url(#wave-filter);
-}
-
-/* Elemen SVG disembunyikan */
-.hidden-svg {
-    position: absolute;
-    width: 0;
-    height: 0;
-    overflow: hidden;
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
 /* Tampilan hasil GIF */
 #gif-result {
     margin-top: 20px;
     border: 4px solid var(--green-neon);
-    max-width: 100%; /* Agar masuk di mobile */
+    max-width: 100%; 
     height: auto;
+    box-shadow: 0 0 15px var(--green-neon);
 }
 
+/* --- Efek Visual Lainnya (Opsional) --- */
+.feedback-flash {
+    animation: flash-border 0.2s ease-out;
+}
+
+@keyframes flash-border {
+    0% { border-color: var(--green-neon); box-shadow: 0 0 20px var(--green-neon); }
+    100% { border-color: var(--cyan-neon); box-shadow: 0 0 15px var(--cyan-neon); }
+}
 
 /* === MEDIA QUERY: LANDSCAPE / DESKTOP MODE === */
 @media (min-width: 850px) {
@@ -263,6 +290,7 @@ button.active {
         flex-direction: row; /* Ubah menjadi horizontal */
         align-items: flex-start;
         max-width: 1200px;
+        gap: 40px;
     }
     
     /* PHOTOBOX UI */
@@ -273,25 +301,34 @@ button.active {
     }
 
     .photobooth-area {
-        width: 600px; /* Tetapkan lebar absolut untuk booth */
+        width: 650px; /* Lebar absolut untuk area booth */
+        height: auto;
+        /* Jika ingin photobooth menyesuaikan tinggi video secara responsif,
+           biarkan padding-bottom pada .photobooth tetap, dan sesuaikan
+           lebar photobooth-area agar video tidak terlalu besar.
+           Jika ingin kontrol dimensi spesifik, setinggi seperti dibawah: */
     }
 
     .photobooth {
-        /* Tetapkan tinggi dan lebar spesifik untuk landscape */
-        width: 600px; 
-        height: 800px; /* Tinggi tetap untuk rasio potret */
-        padding-top: 0; /* Hapus padding top */
+        /* Tetapkan tinggi dan lebar spesifik untuk desktop jika diperlukan,
+           namun mempertahankan rasio 16:9 */
+        width: 650px; /* Lebar default untuk desktop */
+        padding-bottom: 365.625px; /* Ini akan menjadi 650 * 9/16, untuk rasio 16:9 */
+                                   /* Jika menggunakan height: 365.625px, atur height: auto dan hapus padding-bottom */
+        /* Atau bisa menggunakan aspect-ratio: 16 / 9; */
     }
 
-    /* CONTROLS */
+    /* KONTROL */
     .controls {
         width: auto; /* Biarkan lebar menyesuaikan konten */
-        min-width: 350px;
+        min-width: 300px; /* Lebar minimum untuk panel kontrol */
+        max-width: 350px;
     }
     
     .options-group {
         flex-direction: column;
         align-items: center;
+        padding: 15px;
     }
     
     .options-group h3 {
@@ -299,24 +336,39 @@ button.active {
     }
 
     .options-group button {
-        width: 80%; /* Tombol lebih lebar di desktop */
+        width: 90%; /* Tombol lebih lebar di desktop */
         font-size: 0.7rem;
+        padding: 10px 15px;
     }
     
+    .main-btn {
+        font-size: 1.2rem;
+        padding: 20px;
+    }
+
     #snap {
         font-size: 1.5rem;
-        padding: 20px;
+        padding: 25px;
     }
     
     .gif-controls {
-        flex-direction: column;
+        flex-direction: column; /* Ubah kembali jadi kolom */
+        flex-wrap: nowrap;
     }
     
     #gif-status {
         order: -1; /* Posisikan status di atas tombol GIF */
+        margin-bottom: 10px;
+        margin-top: 0;
     }
     
+    #add-to-gif, #create-gif {
+        flex-basis: auto; /* Hapus basis persentase */
+        width: 90%; /* Agar tombol rata dengan lainnya */
+    }
+
     .download-area {
         flex-direction: row;
+        margin-top: 15px;
     }
 }

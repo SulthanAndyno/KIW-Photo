@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snap & Snap 📷 Pro</title>
     
-    <!-- 1. Impor Font Pixel dari Google Fonts -->
+    <!-- Impor Font Futuristik dari Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Press+Start+2P&family=Space+Mono&display=swap" rel="stylesheet">
     
-    <!-- 2. Hubungkan ke file CSS utama -->
+    <!-- Hubungkan ke file CSS utama -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -20,27 +20,30 @@
         <!-- 1. TAMPILAN AWAL -->
         <div id="start-screen">
             <h1>📷 Snap & Snap Pro</h1>
-            <button id="start-btn">Mulai Petualangan!</button>
-            <p class="tip">Pastikan Anda mengizinkan akses kamera.</p>
+            <p class="description">Abadikan momen dengan gaya retro-futuristik!</p>
+            <button id="start-btn" class="main-btn">
+                Mulai Petualangan! <span class="spinner" style="display: none;"></span>
+            </button>
+            <p class="tip">Pastikan Anda mengizinkan akses kamera untuk memulai.</p>
         </div>
 
         <!-- 2. UI PHOTOBOX UTAMA (Awalnya tersembunyi) -->
-        <div id="photobox-ui">
+        <div id="photobox-ui" style="display: none;">
             <div class="photobooth-area">
                 <div class="photobooth">
                     <!-- Stream kamera akan ditampilkan di sini -->
                     <video id="video" autoplay playsinline muted></video>
                     <!-- Foto, template, dan efek digambar di sini -->
                     <canvas id="canvas"></canvas>
-                    <!-- Overlay untuk efek animasi CSS -->
-                    <div id="effect-overlay" class="effect-overlay"></div>
+                    <!-- Overlay untuk efek dekorasi statis (jika diperlukan untuk efek CSS seperti glitch, tapi saat ini tidak) -->
+                    <!-- <div id="effect-overlay" class="effect-overlay"></div> -->
                 </div>
             </div>
             
             <div class="controls">
                 
                 <!-- Tombol Utama -->
-                <button id="snap">AMBIL FOTO!</button>
+                <button id="snap" class="main-btn snap-btn">AMBIL FOTO!</button>
 
                 <!-- Pilihan Template/Frame -->
                 <div class="options-group">
@@ -50,35 +53,26 @@
                     <button class="template-btn" data-template="assets/retro.png">Retro Film</button>
                 </div>
                 
-                <!-- Pilihan Efek Statis (Filter CSS) -->
+                <!-- Pilihan Efek Statis (Filter JS) -->
                 <div class="options-group">
                     <h3>Efek Statis</h3>
                     <button class="static-effect-btn active" data-effect="none">Normal</button>
-                    <button class="static-effect-btn" data-effect="grayscale(100%)">B&W</button>
-                    <button class="static-effect-btn" data-effect="sepia(100%)">Sepia</button>
-                    <button class="static-effect-btn" data-effect="invert(100%)">Invert</button>
-                </div>
-
-                <!-- Pilihan Efek Gerak (Animasi CSS & SVG) -->
-                <div class="options-group">
-                    <h3>Efek Gerak</h3>
-                    <button class="motion-effect-btn active" data-effect="none">None</button>
-                    <button class="motion-effect-btn" data-effect="glow">Glow</button>
-                    <button class="motion-effect-btn" data-effect="glitch">Glitch</button>
-                    <button class="motion-effect-btn" data-effect="wave">Wave</button>
+                    <button class="static-effect-btn" data-effect="grayscale">B&W</button>
+                    <button class="static-effect-btn" data-effect="sepia">Sepia</button>
+                    <button class="static-effect-btn" data-effect="invert">Invert</button>
                 </div>
 
                 <!-- Kontrol Download & GIF -->
                 <div class="options-group action-group">
                     <div class="gif-controls">
-                        <button id="add-to-gif">Tambah Frame (Max 4)</button>
+                        <button id="add-to-gif" class="action-btn">Tambah Frame (Max 4)</button>
                         <span id="gif-status">0/4 Frame</span>
+                        <button id="create-gif" class="action-btn">Buat & Simpan GIF!</button>
                     </div>
-                    <button id="create-gif">Buat & Simpan GIF!</button>
                     
                     <div class="download-area">
                         <a id="download-link" class="download-btn" style="display: none;" download="snap-n-snap.png">Download Foto</a>
-                        <button id="reset-btn" style="display: none;">Mulai Ulang</button>
+                        <button id="reset-btn" class="action-btn" style="display: none;">Mulai Ulang</button>
                     </div>
                 </div>
 
@@ -89,20 +83,10 @@
         </div>
     </div>
     
-    <!-- Filter SVG untuk Efek Wave/Gelombang -->
-    <svg class="hidden-svg">
-        <filter id="wave-filter">
-            <feTurbulence baseFrequency="0.02 0.05" numOctaves="3" result="turbulence" seed="2">
-                <animate attributeName="baseFrequency" dur="10s" keyTimes="0;0.5;1" values="0.02 0.05;0.04 0.08;0.02 0.05" repeatCount="indefinite" />
-            </feTurbulence>
-            <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="20" xChannelSelector="R" yChannelSelector="G" />
-        </filter>
-    </svg>
-
-    <!-- 3. Library untuk membuat GIF (offline, via CDN) -->
+    <!-- Library untuk membuat GIF (offline, via CDN) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
     
-    <!-- 4. Hubungkan ke file JavaScript utama -->
+    <!-- Hubungkan ke file JavaScript utama -->
     <script src="js/app.js"></script>
 </body>
 </html>
