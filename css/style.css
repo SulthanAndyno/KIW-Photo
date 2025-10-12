@@ -6,6 +6,9 @@
     --yellow-pixel: #FFE600;
     --green-neon: #39FF14;
     --red-alert: #FF3333; /* Warna baru untuk error/peringatan */
+    --font-primary: 'Space Mono', monospace;
+    --font-heading: 'Press Start 2P', cursive;
+    --font-alt: 'Orbitron', sans-serif; /* Untuk variasi judul/display */
 }
 
 /* === GAYA DASAR & FONT === */
@@ -16,7 +19,7 @@
 }
 
 body {
-    font-family: 'Space Mono', monospace; /* Default font lebih readable */
+    font-family: var(--font-primary); /* Default font lebih readable */
     background-color: var(--bg-dark);
     color: var(--cyan-neon);
     display: flex;
@@ -35,7 +38,7 @@ body {
     align-items: center;
     gap: 20px;
     width: 100%;
-    max-width: 650px;
+    max-width: 650px; /* Batasi lebar container di mobile/portrait */
     padding: 10px;
 }
 
@@ -45,10 +48,11 @@ body {
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+    width: 100%; /* Agar memenuhi container */
 }
 
 #start-screen h1 {
-    font-family: 'Press Start 2P', cursive;
+    font-family: var(--font-heading);
     font-size: 2rem;
     color: var(--yellow-pixel);
     text-shadow: 4px 4px 0 var(--magenta-neon);
@@ -69,7 +73,7 @@ body {
 
 /* === AREA PHOTOBOX UTAMA (PORTRAIT) === */
 #photobox-ui {
-    display: none; 
+    display: none; /* Awalnya tersembunyi */
     flex-direction: column;
     align-items: center;
     gap: 20px;
@@ -88,8 +92,6 @@ body {
     position: relative;
     width: 100%; /* Lebar penuh dari photobooth-area */
     padding-bottom: 56.25%; /* Rasio 16:9 (9/16 * 100%) - default modern webcam */
-                               /* Jika ingin 4:3, pakai 75% */
-                               /* Jika ingin 3:4 portrait, pakai 133.33% */
     height: 0; /* Penting untuk padding-bottom trick */
     overflow: hidden;
     border: 8px solid var(--cyan-neon);
@@ -104,7 +106,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Penting: agar video/canvas tidak terpotong */
+    object-fit: contain; /* Penting: agar video/canvas tidak terpotong dan mempertahankan aspek rasio */
     image-rendering: pixelated; /* Memberikan efek retro pixel */
     background-color: black; /* Warna latar belakang untuk area kosong jika object-fit: contain */
 }
@@ -115,7 +117,7 @@ body {
     flex-direction: column;
     gap: 15px;
     width: 100%;
-    max-width: 600px;
+    max-width: 600px; /* Batasi lebar kontrol */
 }
 
 .options-group {
@@ -129,7 +131,7 @@ body {
     position: relative;
 }
 .options-group h3 {
-    font-family: 'Press Start 2P', cursive;
+    font-family: var(--font-heading);
     font-size: 0.7rem;
     color: var(--green-neon);
     width: 100%; /* Pastikan judul mengambil lebar penuh */
@@ -141,7 +143,7 @@ body {
 
 /* --- Gaya Tombol Umum --- */
 button, .download-btn {
-    font-family: 'Press Start 2P', cursive;
+    font-family: var(--font-heading);
     background-color: var(--bg-dark);
     color: var(--cyan-neon);
     border: 3px solid var(--cyan-neon); /* Border lebih kecil */
@@ -158,11 +160,21 @@ button, .download-btn {
     overflow: hidden; /* Untuk efek hover */
 }
 
-button:hover, .download-btn:hover {
+button:hover:not(:disabled), .download-btn:hover { /* :not(:disabled) agar hover tidak berfungsi pada tombol disabled */
     background-color: var(--cyan-neon);
     color: var(--bg-dark);
     box-shadow: 0 0 10px var(--cyan-neon), 4px 4px 0 var(--green-neon);
     transform: translate(-2px, -2px);
+}
+
+button:disabled { /* Gaya untuk tombol yang disabled */
+    cursor: not-allowed;
+    opacity: 0.6;
+    background-color: #333;
+    border-color: #555;
+    color: #AAA;
+    box-shadow: none;
+    transform: none;
 }
 
 button.active {
@@ -183,7 +195,7 @@ button.active:hover {
     font-size: 1rem;
     border-width: 4px;
 }
-.main-btn:hover {
+.main-btn:hover:not(:disabled) {
     box-shadow: 0 0 15px var(--cyan-neon), 6px 6px 0 var(--green-neon);
 }
 
@@ -195,7 +207,7 @@ button.active:hover {
     box-shadow: 0 0 10px var(--magenta-neon);
 }
 
-#snap:hover {
+#snap:hover:not(:disabled) {
     background-color: var(--yellow-pixel);
     color: var(--bg-dark);
     border-color: var(--yellow-pixel);
@@ -220,13 +232,19 @@ button.active:hover {
     flex-basis: 45%; /* Untuk rata dua kolom */
     font-size: 0.6rem;
 }
-#gif-status {
+#gif-status, #multi-frame-status { /* Gaya untuk status multi-frame juga */
     color: var(--green-neon);
     flex-basis: 100%; /* Ambil lebar penuh */
     text-align: center;
     font-size: 0.5rem;
     margin-top: 5px;
 }
+#multi-frame-status {
+    color: var(--yellow-pixel); /* Warna berbeda untuk status multi-frame */
+    font-family: var(--font-alt);
+    font-size: 0.6rem;
+}
+
 
 .action-group {
     flex-direction: row; /* Kembali ke baris */
@@ -275,7 +293,7 @@ button.active:hover {
 }
 
 @keyframes flash-border {
-    0% { border-color: var(--green-neon); box-shadow: 0 0 20px var(--green-neon); }
+    0% { border-color: var(--yellow-pixel); box-shadow: 0 0 20px var(--yellow-pixel); }
     100% { border-color: var(--cyan-neon); box-shadow: 0 0 15px var(--cyan-neon); }
 }
 
@@ -302,20 +320,12 @@ button.active:hover {
 
     .photobooth-area {
         width: 650px; /* Lebar absolut untuk area booth */
-        height: auto;
-        /* Jika ingin photobooth menyesuaikan tinggi video secara responsif,
-           biarkan padding-bottom pada .photobooth tetap, dan sesuaikan
-           lebar photobooth-area agar video tidak terlalu besar.
-           Jika ingin kontrol dimensi spesifik, setinggi seperti dibawah: */
+        /* Biarkan padding-bottom pada .photobooth untuk menjaga aspek rasio */
     }
 
     .photobooth {
-        /* Tetapkan tinggi dan lebar spesifik untuk desktop jika diperlukan,
-           namun mempertahankan rasio 16:9 */
         width: 650px; /* Lebar default untuk desktop */
         padding-bottom: 365.625px; /* Ini akan menjadi 650 * 9/16, untuk rasio 16:9 */
-                                   /* Jika menggunakan height: 365.625px, atur height: auto dan hapus padding-bottom */
-        /* Atau bisa menggunakan aspect-ratio: 16 / 9; */
     }
 
     /* KONTROL */
@@ -356,8 +366,8 @@ button.active:hover {
         flex-wrap: nowrap;
     }
     
-    #gif-status {
-        order: -1; /* Posisikan status di atas tombol GIF */
+    #gif-status, #multi-frame-status {
+        order: -1; /* Posisikan status di atas tombol GIF / multi-frame */
         margin-bottom: 10px;
         margin-top: 0;
     }
