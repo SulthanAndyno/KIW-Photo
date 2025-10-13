@@ -3,7 +3,7 @@
 // Impor modul-modul lain yang diperlukan
 import * as Camera from './camera.js';
 import { applyJsFilter } from './effects.js';
-import * as GifHandler from './gifHandler.js';
+// import * as GifHandler from './gifHandler.js'; // DIHAPUS
 
 // === MENYIAPKAN ELEMEN DOM ===
 const startScreen = document.getElementById('start-screen');
@@ -23,10 +23,11 @@ const resetBtn = document.getElementById('reset-btn');
 const templateBtns = document.querySelectorAll('.template-btn');
 const staticEffectBtns = document.querySelectorAll('.static-effect-btn');
 
-const gifStatus = document.getElementById('gif-status');
-const createGifBtn = document.getElementById('create-gif');
-const addToGifBtn = document.getElementById('add-to-gif');
-const gifResult = document.getElementById('gif-result');
+// Konstanta dan elemen GIF DIHAPUS
+// const gifStatus = document.getElementById('gif-status');
+// const createGifBtn = document.getElementById('create-gif');
+// const addToGifBtn = document.getElementById('add-to-gif');
+// const gifResult = document.getElementById('gif-result');
 
 const multiFrameStatus = document.getElementById('multi-frame-status'); // Elemen status untuk mode multi-frame
 
@@ -47,7 +48,7 @@ const templateImages = {};
 
 // Inisialisasi modul Camera dan GIF dengan elemen DOM yang relevan
 Camera.initCamera(video, canvas, ctx);
-GifHandler.initGifHandler(gifStatus, createGifBtn, addToGifBtn, gifResult, downloadLink);
+// GifHandler.initGifHandler(gifStatus, createGifBtn, addToGifBtn, gifResult, downloadLink); // DIHAPUS
 
 
 // Set default aktif state pada tombol saat pertama kali load
@@ -99,11 +100,11 @@ async function appStartCamera() {
         
         requestAnimationFrame(appRenderLoop); // Mulai loop rendering untuk preview kamera live
         
-        // Aktifkan tombol GIF setelah kamera berhasil diaktifkan jika mode bukan multi-frame
-        if (!currentTemplate.startsWith('multi-')) {
-            addToGifBtn.disabled = false;
-            createGifBtn.disabled = false;
-        }
+        // Aktifkan tombol GIF setelah kamera berhasil diaktifkan jika mode bukan multi-frame - DIHAPUS
+        // if (!currentTemplate.startsWith('multi-')) {
+        //     addToGifBtn.disabled = false;
+        //     createGifBtn.disabled = false;
+        // }
 
     } catch (err) {
         console.error("Failed to start camera:", err);
@@ -225,7 +226,7 @@ function appTakePhoto() {
             currentMultiFrameIndex++;
             
             // Perbarui UI status
-            multiFrameStatus.textContent = `Mengambil Foto ${currentMultiFrameIndex}/${MAX_MULTI_FRAMES}...`;
+            multiFrameStatus.textContent = `MENGAMBIL FOTO ${currentMultiFrameIndex}/${MAX_MULTI_FRAMES}...`;
             snapBtn.textContent = `AMBIL FOTO ${currentMultiFrameIndex < MAX_MULTI_FRAMES ? currentMultiFrameIndex + 1 : 'FINAL'}`; 
 
             // Gambar preview kolase saat ini
@@ -241,13 +242,13 @@ function appTakePhoto() {
                 snapBtn.style.display = 'none'; // Sembunyikan tombol snap
                 downloadLink.style.display = 'inline-block';
                 resetBtn.style.display = 'inline-block';
-                multiFrameStatus.textContent = "Kolase Selesai!";
+                multiFrameStatus.textContent = "KOLASE SELESAI!";
                 isPhotoTaken = true; // Tandai foto sudah diambil untuk menonaktifkan live preview
                 
-                // Pastikan tombol GIF direset / dinonaktifkan jika mode multi-photo aktif dan selesai
-                GifHandler.resetGifState(); // Reset GIF state
-                addToGifBtn.disabled = true;
-                createGifBtn.disabled = true;
+                // Pastikan tombol GIF direset / dinonaktifkan jika mode multi-photo aktif dan selesai - DIHAPUS
+                // GifHandler.resetGifState(); 
+                // addToGifBtn.disabled = true;
+                // createGifBtn.disabled = true;
             }
         }
         return; // Penting: Jangan jalankan logika single photo di bawah
@@ -265,8 +266,8 @@ function appTakePhoto() {
     snapBtn.style.display = 'none'; // Sembunyikan tombol 'AMBIL FOTO!'
     downloadLink.style.display = 'inline-block'; // Tampilkan tombol 'Download Foto'
     resetBtn.style.display = 'inline-block'; // Tampilkan tombol 'Mulai Ulang'
-    gifResult.style.display = 'none'; // Sembunyikan hasil GIF lama jika ada
-    GifHandler.resetGifState(); // Reset state GIF UI dan tampilkan 0/4 Frame
+    // gifResult.style.display = 'none'; // Sembunyikan hasil GIF lama jika ada - DIHAPUS
+    // GifHandler.resetGifState(); // Reset state GIF UI dan tampilkan 0/4 Frame - DIHAPUS
     
     // Tambahkan feedback visual ke photobooth (flash singkat)
     const photobooth = document.querySelector('.photobooth');
@@ -338,84 +339,152 @@ function appApplyFinalComposite() {
 /**
  * Fungsi untuk menggambar layout multi-foto (kolase) langsung di canvas
  * dan menempatkan foto-foto yang sudah diambil ke slotnya.
+ * TELAH DIMODIFIKASI UNTUK TAMPILAN FUTURISTIK.
  */
 function appDrawMultiPhotoLayout() {
     const { width: canvasWidth, height: canvasHeight } = Camera.getCanvasDimensions();
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-    const paddingRatio = 0.03; // 3% padding dari lebar canvas untuk estetika
-    const padding = canvasWidth * paddingRatio; 
+    // Dapatkan variabel CSS untuk warna
+    const cyanNeon = getComputedStyle(document.body).getPropertyValue('--cyan-neon');
+    const magentaNeon = getComputedStyle(document.body).getPropertyValue('--magenta-neon');
+    const yellowPixel = getComputedStyle(document.body).getPropertyValue('--yellow-pixel');
+    const greenNeon = getComputedStyle(document.body).getPropertyValue('--green-neon');
+    const bgDark = getComputedStyle(document.body).getPropertyValue('--bg-dark');
+    const fontHeading = getComputedStyle(document.body).getPropertyValue('--font-heading');
+    const fontPrimary = getComputedStyle(document.body).getPropertyValue('--font-primary');
+    const glitchColor1 = getComputedStyle(document.body).getPropertyValue('--glitch-color-1');
+    const glitchColor2 = getComputedStyle(document.body).getPropertyValue('--glitch-color-2');
+
+
+    const paddingRatio = 0.04; // 4% padding dari lebar canvas
+    const innerPaddingRatio = 0.02; // Padding di dalam setiap frame
+    const padding = canvasWidth * paddingRatio;
+    const innerPadding = canvasWidth * innerPaddingRatio;
 
     // Untuk layout 2x2
     const frameContentWidth = (canvasWidth - padding * 3) / 2;
     const frameContentHeight = (canvasHeight - padding * 3) / 2;
 
-    const frameOuterWidth = frameContentWidth + (currentTemplate === 'multi-polaroid' ? 0 : padding * 0.5); // Lebih ruang untuk retro frame
-    const frameOuterHeight = frameContentHeight + (currentTemplate === 'multi-polaroid' ? frameContentHeight * 0.25 : padding * 0.5); // Polaroid ada space bawah
-
-    // Menggambar latar belakang keseluruhan (misal putih untuk polaroid, hitam untuk retro)
-    ctx.fillStyle = currentTemplate === 'multi-polaroid' ? '#DDDDDD' : '#333333';
+    // --- Background Keseluruhan Kolase ---
+    ctx.fillStyle = bgDark;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-    // Garis batas luar kolase (opsional, bisa lebih tebal)
-    ctx.strokeStyle = currentTemplate === 'multi-polaroid' ? '#CCCCCC' : '#555555';
-    ctx.lineWidth = padding * 0.5;
+    // Garis batas luar kolase (efek neon)
+    ctx.strokeStyle = cyanNeon;
+    ctx.lineWidth = padding * 0.4; // Lebih tebal dari sebelumnya
+    ctx.shadowColor = cyanNeon;
+    ctx.shadowBlur = padding * 0.5;
     ctx.strokeRect(0, 0, canvasWidth, canvasHeight);
-    
+    ctx.shadowBlur = 0; // Reset shadow untuk elemen berikutnya
+
+    // --- Judul Kolase ---
+    ctx.fillStyle = yellowPixel;
+    ctx.font = `${Math.floor(canvasHeight * 0.05)}px ${fontHeading}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.shadowColor = yellowPixel;
+    ctx.shadowBlur = 10;
+    ctx.fillText("PHOTO GRID // STATUS: ONLINE", canvasWidth / 2, padding / 2);
+    ctx.shadowBlur = 0;
+
     for (let i = 0; i < MAX_MULTI_FRAMES; i++) {
         const row = Math.floor(i / 2);
         const col = i % 2;
 
         const xOffset = padding + col * (frameContentWidth + padding);
-        const yOffset = padding + row * (frameContentHeight + padding);
+        const yOffset = padding * 1.5 + row * (frameContentHeight + padding); // Sedikit lebih rendah karena judul
+
+        // Area frame dasar (akan ditutupi oleh desain template spesifik)
+        ctx.fillStyle = '#0F0F0F'; // Latar belakang gelap untuk setiap slot
+        ctx.fillRect(xOffset, yOffset, frameContentWidth, frameContentHeight);
+
+        // Border umum untuk setiap slot
+        ctx.strokeStyle = magentaNeon;
+        ctx.lineWidth = 2;
+        ctx.shadowColor = magentaNeon;
+        ctx.shadowBlur = 5;
+        ctx.strokeRect(xOffset, yOffset, frameContentWidth, frameContentHeight);
+        ctx.shadowBlur = 0;
 
         if (currentTemplate === 'multi-polaroid') {
-            const polaroidTextSpaceHeight = frameContentHeight * 0.25; // 25% dari tinggi foto
-            const polaroidFrameTotalHeight = frameContentHeight + polaroidTextSpaceHeight;
+            const polaroidTextSpaceHeight = frameContentHeight * 0.20; // Lebih kecil
+            const photoAreaHeight = frameContentHeight - polaroidTextSpaceHeight;
 
-            // Gambar latar belakang polaroid putih
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fillRect(xOffset, yOffset, frameContentWidth, polaroidFrameTotalHeight);
-
-            // Teks di bawah polaroid
-            ctx.fillStyle = '#000000';
-            ctx.font = `${Math.floor(polaroidTextSpaceHeight * 0.4)}px ${getComputedStyle(document.body).getPropertyValue('--font-primary')}`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(`Foto ${i + 1}`, xOffset + frameContentWidth / 2, yOffset + frameContentHeight + polaroidTextSpaceHeight / 2);
-
-            // Garis luar foto utama (inner frame)
-            ctx.strokeStyle = '#BBBBBB';
-            ctx.lineWidth = 1;
-            ctx.strokeRect(xOffset, yOffset, frameContentWidth, frameContentHeight);
-
-        } else if (currentTemplate === 'multi-retro') {
-            // Bingkai retro (hitam dengan efek film)
-            const retroBorder = padding * 0.3; // Tebal border retro
-            ctx.fillStyle = '#111111'; // Warna background untuk retro frame
+            // Background "polaroid" utama (biru tua untuk futuristik)
+            ctx.fillStyle = bgDark;
             ctx.fillRect(xOffset, yOffset, frameContentWidth, frameContentHeight);
 
-            // Gambar area foto di dalamnya
+            // Area foto di dalam polaroid (dengan border neon)
+            const photoInnerX = xOffset + innerPadding;
+            const photoInnerY = yOffset + innerPadding;
+            const photoInnerW = frameContentWidth - innerPadding * 2;
+            const photoInnerH = photoAreaHeight - innerPadding * 2;
+            
+            ctx.fillStyle = '#000000'; // Background hitam untuk area foto
+            ctx.fillRect(photoInnerX, photoInnerY, photoInnerW, photoInnerH);
+            
+            ctx.strokeStyle = cyanNeon; // Border neon untuk area foto
+            ctx.lineWidth = 3;
+            ctx.shadowColor = cyanNeon;
+            ctx.shadowBlur = 8;
+            ctx.strokeRect(photoInnerX, photoInnerY, photoInnerW, photoInnerH);
+            ctx.shadowBlur = 0;
+
+            // Area teks bawah dengan background berbeda dan teks bercahaya
+            const textBgY = yOffset + photoAreaHeight;
+            ctx.fillStyle = bgDark; // Background gelap untuk teks
+            ctx.fillRect(xOffset, textBgY, frameContentWidth, polaroidTextSpaceHeight);
+
+            ctx.fillStyle = yellowPixel;
+            ctx.font = `${Math.floor(polaroidTextSpaceHeight * 0.4)}px ${fontHeading}`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = yellowPixel;
+            ctx.shadowBlur = 5;
+            ctx.fillText(`FRAME ${i + 1}`, xOffset + frameContentWidth / 2, textBgY + polaroidTextSpaceHeight / 2);
+            ctx.shadowBlur = 0;
+
+
+        } else if (currentTemplate === 'multi-retro') {
+            const retroBorder = innerPadding * 1.2; // Border retro lebih tebal
+            
+            // Background luar (biru gelap)
+            ctx.fillStyle = bgDark; 
+            ctx.fillRect(xOffset, yOffset, frameContentWidth, frameContentHeight);
+
+            // Area foto di dalamnya
             const innerX = xOffset + retroBorder;
             const innerY = yOffset + retroBorder;
             const innerW = frameContentWidth - retroBorder * 2;
             const innerH = frameContentHeight - retroBorder * 2;
+            
             ctx.fillStyle = '#000000'; // Warna inner foto area
             ctx.fillRect(innerX, innerY, innerW, innerH);
-
-            // Perforasi (gaya film) - contoh sederhana
-            ctx.fillStyle = '#222222';
-            const perfSize = frameContentWidth * 0.03; // Ukuran perforasi
-            const numPerfs = Math.floor(frameContentWidth / (perfSize * 2));
-            const startXPerf = xOffset + (frameContentWidth - (numPerfs * perfSize * 2 - perfSize)) / 2;
             
+            ctx.strokeStyle = greenNeon; // Border neon untuk area foto
+            ctx.lineWidth = 3;
+            ctx.shadowColor = greenNeon;
+            ctx.shadowBlur = 8;
+            ctx.strokeRect(innerX, innerY, innerW, innerH);
+            ctx.shadowBlur = 0;
+
+            // Perforasi (gaya film) - dengan efek glow
+            ctx.fillStyle = greenNeon;
+            const perfSize = frameContentWidth * 0.03; // Ukuran perforasi
+            const numPerfs = Math.floor((frameContentWidth - retroBorder * 2) / (perfSize * 2));
+            const startXPerf = xOffset + retroBorder + (innerW - (numPerfs * perfSize * 2 - perfSize)) / 2;
+            
+            ctx.shadowColor = greenNeon;
+            ctx.shadowBlur = 5;
             for(let p = 0; p < numPerfs; p++) {
                 const px = startXPerf + p * perfSize * 2;
                 // Atas
-                ctx.fillRect(px, yOffset - retroBorder, perfSize, retroBorder); 
+                ctx.fillRect(px, yOffset + retroBorder / 2 - perfSize / 2, perfSize, perfSize); 
                 // Bawah
-                ctx.fillRect(px, yOffset + frameContentHeight, perfSize, retroBorder); 
+                ctx.fillRect(px, yOffset + frameContentHeight - retroBorder / 2 - perfSize / 2, perfSize, perfSize); 
             }
+            ctx.shadowBlur = 0;
         }
 
         // Gambar foto yang sudah diambil ke dalam slot
@@ -425,12 +494,13 @@ function appDrawMultiPhotoLayout() {
 
             // Menentukan area tempat foto akan digambar (sesuai template)
             if (currentTemplate === 'multi-polaroid') {
-                destX = xOffset;
-                destY = yOffset;
-                destWidth = frameContentWidth;
-                destHeight = frameContentHeight;
+                const photoAreaHeight = frameContentHeight * 0.80; // Sama seperti di atas
+                destX = xOffset + innerPadding;
+                destY = yOffset + innerPadding;
+                destWidth = frameContentWidth - innerPadding * 2;
+                destHeight = photoAreaHeight - innerPadding * 2;
             } else if (currentTemplate === 'multi-retro') {
-                const retroBorder = padding * 0.3;
+                const retroBorder = innerPadding * 1.2;
                 destX = xOffset + retroBorder;
                 destY = yOffset + retroBorder;
                 destWidth = frameContentWidth - retroBorder * 2;
@@ -463,25 +533,43 @@ function appDrawMultiPhotoLayout() {
         } else if (currentMultiFrameIndex <= i) { // Jika slot kosong dan belum giliran diambil
             let placeholderX, placeholderY, placeholderWidth, placeholderHeight;
             if (currentTemplate === 'multi-polaroid') {
-                placeholderX = xOffset;
-                placeholderY = yOffset;
-                placeholderWidth = frameContentWidth;
-                placeholderHeight = frameContentHeight;
+                const photoAreaHeight = frameContentHeight * 0.80;
+                placeholderX = xOffset + innerPadding;
+                placeholderY = yOffset + innerPadding;
+                placeholderWidth = frameContentWidth - innerPadding * 2;
+                placeholderHeight = photoAreaHeight - innerPadding * 2;
             } else if (currentTemplate === 'multi-retro') {
-                const retroBorder = padding * 0.3;
+                const retroBorder = innerPadding * 1.2;
                 placeholderX = xOffset + retroBorder;
                 placeholderY = yOffset + retroBorder;
                 placeholderWidth = frameContentWidth - retroBorder * 2;
                 placeholderHeight = frameContentHeight - retroBorder * 2;
             }
 
-            ctx.fillStyle = 'rgba(0,0,0,0.5)';
+            // Gaya placeholder "no signal" atau "standby"
+            ctx.fillStyle = 'rgba(0,0,0,0.7)';
             ctx.fillRect(placeholderX, placeholderY, placeholderWidth, placeholderHeight);
-            ctx.fillStyle = '#FFF';
-            ctx.font = `${Math.floor(placeholderHeight * 0.1)}px ${getComputedStyle(document.body).getPropertyValue('--font-heading')}`;
+
+            // Efek garis "scanline" atau "glitch" untuk placeholder
+            ctx.strokeStyle = glitchColor1;
+            ctx.lineWidth = 1;
+            for(let j=0; j < placeholderHeight; j+=5) {
+                ctx.beginPath();
+                ctx.moveTo(placeholderX, placeholderY + j);
+                ctx.lineTo(placeholderX + placeholderWidth, placeholderY + j);
+                ctx.stroke();
+            }
+
+            // Teks "STANDBY" atau "LOADING" dengan glow
+            ctx.fillStyle = yellowPixel;
+            ctx.font = `${Math.floor(placeholderHeight * 0.1)}px ${fontHeading}`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(`FOTO ${i + 1}`, placeholderX + placeholderWidth / 2, placeholderY + placeholderHeight / 2);
+            ctx.shadowColor = yellowPixel;
+            ctx.shadowBlur = 10;
+            const placeholderText = (currentMultiFrameIndex === i) ? "INPUT REQUIRED" : `SLOT ${i + 1} // STANDBY`;
+            ctx.fillText(placeholderText, placeholderX + placeholderWidth / 2, placeholderY + placeholderHeight / 2);
+            ctx.shadowBlur = 0;
         }
     }
     updateDownloadLink(); // Perbarui link download setelah kolase digambar
@@ -505,52 +593,8 @@ function updateDownloadLink() {
     }
 }
 
-/**
- * Menambahkan frame ke GIF melalui GifHandler.
- * Mengambil frame live, menerapkan efek, dan meneruskan ke modul GIF.
- * TIDAK BERLAKU DI MODE MULTI-FOTO.
- */
-function appAddFrameToGif() {
-    // Validasi apakah kamera aktif dan ada frame video live yang tersedia.
-    if (!Camera.isStreamActive() || !Camera.getCurrentVideoFrame() || currentTemplate.startsWith('multi-')) { 
-        alert("Kamera tidak aktif, tidak ada frame, atau Anda dalam mode kolase. Ambil foto utama atau beralih mode terlebih dahulu.");
-        return;
-    }
-
-    // Mendapatkan frame video live saat ini (yang sudah di-drawLiveFrame)
-    const frameImageData = Camera.getCurrentVideoFrame();
-    const { width, height } = Camera.getCanvasDimensions();
-
-    // Buat salinan ImageData dari frame video asli untuk diterapkan filter.
-    let processedFrame = new ImageData(
-        new Uint8ClampedArray(frameImageData.data),
-        frameImageData.width,
-        frameImageData.height
-    );
-    applyJsFilter(processedFrame, currentStaticEffect); // Terapkan filter JS yang dipilih
-
-    // Siapkan template (jika ada) untuk digambar di GifHandler.
-    let templateForGif = null;
-    if (currentTemplate !== 'none') {
-        const img = templateImages[currentTemplate];
-        if (img && img.complete) {
-            templateForGif = img; 
-        } else if (img) {
-            console.warn(`Template image for ${currentTemplate} is not yet loaded for GIF frame. It might appear without template.`);
-        } else {
-            console.warn(`Template image object for ${currentTemplate} not found.`);
-        }
-    }
-
-    // Panggil fungsi addFrameToGif dari modul GifHandler
-    const added = GifHandler.addFrameToGif(processedFrame, templateForGif, width, height);
-    if (added) {
-        // Berikan feedback visual jika frame berhasil ditambahkan
-        const photobooth = document.querySelector('.photobooth');
-        photobooth.classList.add('feedback-flash'); 
-        setTimeout(() => photobooth.classList.remove('feedback-flash'), 300);
-    }
-}
+// Fungsi GIF DIHAPUS
+// function appAddFrameToGif() { ... }
 
 
 /**
@@ -573,7 +617,7 @@ function appReset() {
     // Reset tampilan UI
     startScreen.style.display = 'flex'; // Kembali ke layar awal
     photoboxUI.style.display = 'none';   // Sembunyikan UI photobox
-    gifResult.style.display = 'none';    // Sembunyikan hasil GIF
+    // gifResult.style.display = 'none';    // Sembunyikan hasil GIF - DIHAPUS
     multiFrameStatus.style.display = 'none'; // Sembunyikan status multi-frame
     
     // Reset tombol dan link
@@ -583,10 +627,10 @@ function appReset() {
     downloadLink.style.display = 'none'; // Sembunyikan link download
     resetBtn.style.display = 'none';     // Sembunyikan tombol reset
     
-    // Reset state GIF melalui modul GifHandler
-    GifHandler.resetGifState(); 
-    addToGifBtn.disabled = true; // Nonaktifkan tombol GIF sampai kamera aktif lagi
-    createGifBtn.disabled = true;
+    // Reset state GIF melalui modul GifHandler - DIHAPUS
+    // GifHandler.resetGifState(); 
+    // addToGifBtn.disabled = true; // Nonaktifkan tombol GIF sampai kamera aktif lagi
+    // createGifBtn.disabled = true;
 
     // Reset status aktif tombol pilihan template dan efek
     templateBtns.forEach(b => b.classList.remove('active'));
@@ -624,14 +668,14 @@ templateBtns.forEach(btn => {
             capturedFramesForMultiLayout = [];
             currentMultiFrameIndex = 0;
             multiFrameStatus.style.display = 'inline';
-            multiFrameStatus.textContent = `Mengambil Foto ${currentMultiFrameIndex + 1}/${MAX_MULTI_FRAMES}...`;
+            multiFrameStatus.textContent = `MENGAMBIL FOTO ${currentMultiFrameIndex + 1}/${MAX_MULTI_FRAMES}...`;
             snapBtn.textContent = `AMBIL FOTO ${currentMultiFrameIndex + 1}`;
             downloadLink.style.display = 'none'; // Sembunyikan download link sampai semua foto diambil
 
-            // Menonaktifkan GIF controls di mode multi-photo
-            GifHandler.resetGifState(); 
-            addToGifBtn.disabled = true;
-            createGifBtn.disabled = true;
+            // Menonaktifkan GIF controls di mode multi-photo - DIHAPUS
+            // GifHandler.resetGifState(); 
+            // addToGifBtn.disabled = true;
+            // createGifBtn.disabled = true;
 
             // Pastikan live preview aktif dalam mode multi-frame
             isPhotoTaken = false; 
@@ -645,11 +689,11 @@ templateBtns.forEach(btn => {
             snapBtn.textContent = 'AMBIL FOTO!';
             capturedFramesForMultiLayout = []; // Kosongkan multi-frame data
 
-            // Aktifkan kembali GIF controls jika kamera aktif dan tidak ada foto yang sudah diambil
-            if (Camera.isStreamActive() && !isPhotoTaken) { 
-               addToGifBtn.disabled = false;
-               createGifBtn.disabled = false;
-            }
+            // Aktifkan kembali GIF controls jika kamera aktif dan tidak ada foto yang sudah diambil - DIHAPUS
+            // if (Camera.isStreamActive() && !isPhotoTaken) { 
+            //    addToGifBtn.disabled = false;
+            //    createGifBtn.disabled = false;
+            // }
             // Jika sebelumnya di mode multi-frame dan beralih ke single, reset isPhotoTaken
             // agar live preview kembali aktif.
             if (previousTemplate.startsWith('multi-') && currentMultiFrameIndex > 0) {
@@ -697,14 +741,14 @@ staticEffectBtns.forEach(btn => {
     });
 });
 
-addToGifBtn.addEventListener('click', appAddFrameToGif);
-createGifBtn.addEventListener('click', GifHandler.createGif); // Panggil fungsi createGif dari modul GifHandler
+// addToGifBtn.addEventListener('click', appAddFrameToGif); // DIHAPUS
+// createGifBtn.addEventListener('click', GifHandler.createGif); // DIHAPUS
 
 // Panggilan inisialisasi awal saat DOM sudah dimuat
 document.addEventListener('DOMContentLoaded', () => {
     resetBtn.style.display = 'none'; // Pastikan tombol reset tidak tampil saat pertama kali load
     downloadLink.style.display = 'none'; // Pastikan link download tidak tampil
-    addToGifBtn.disabled = true; // Nonaktifkan tombol GIF di awal
-    createGifBtn.disabled = true;
+    // addToGifBtn.disabled = true; // Nonaktifkan tombol GIF di awal - DIHAPUS
+    // createGifBtn.disabled = true; // DIHAPUS
     multiFrameStatus.style.display = 'none'; // Sembunyikan status multi-frame di awal
 });

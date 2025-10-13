@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snap & Snap 📷 Pro</title>
     
-    <!-- Impor Font Futuristik dari Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Press+Start+2P&family=Space+Mono&display=swap" rel="stylesheet">
+    <!-- Impor Font Futuristik dari Google Fonts (DIHAPUS) -->
+    <!-- <link rel="preconnect" href="https://fonts.googleapis.com"> -->
+    <!-- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> -->
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Press+Start+2P&family=Space+Mono&display=swap" rel="stylesheet"> -->
     
     <!-- Hubungkan ke file CSS utama -->
     <link rel="stylesheet" href="css/style.css">
@@ -49,10 +49,10 @@
                 <div class="options-group">
                     <h3>Pilih Template</h3>
                     <button class="template-btn active" data-template="none">None</button>
-                    <button class="template-btn" data-template="assets/polaroid.png">Polaroid (Single)</button>
-                    <button class="template-btn" data-template="assets/retro.png">Retro Film (Single)</button>
-                    <button class="template-btn" data-template="multi-polaroid">Multi-Polaroid (4 Foto)</button>
-                    <button class="template-btn" data-template="multi-retro">Multi-Retro (4 Foto)</button>
+                    <!-- <button class="template-btn" data-template="assets/polaroid.png">Polaroid (Single)</button>
+                    <button class="template-btn" data-template="assets/retro.png">Retro Film (Single)</button> -->
+                    <button class="template-btn" data-template="multi-polaroid">Polaroid (4 Foto)</button>
+                    <button class="template-btn" data-template="multi-retro">Retro (4 Foto)</button>
                 </div>
                 
                 <!-- Pilihan Efek Statis (Filter JS) -->
@@ -64,15 +64,10 @@
                     <button class="static-effect-btn" data-effect="invert">Invert</button>
                 </div>
 
-                <!-- Kontrol Download & GIF -->
+                <!-- Kontrol Download & Reset -->
                 <div class="options-group action-group">
-                    <div class="gif-controls">
-                        <button id="add-to-gif" class="action-btn" disabled>Tambah Frame GIF</button>
-                        <span id="gif-status">0/4 Frame</span>
-                        <button id="create-gif" class="action-btn" disabled>Buat & Simpan GIF!</button>
-                        <!-- Status khusus untuk mode multi-frame -->
-                        <span id="multi-frame-status" style="display:none;"></span>
-                    </div>
+                    <!-- Status khusus untuk mode multi-frame -->
+                    <span id="multi-frame-status" style="display:none;"></span>
                     
                     <div class="download-area">
                         <a id="download-link" class="download-btn" style="display: none;" download="snap-n-snap.png">Download Foto</a>
@@ -80,19 +75,13 @@
                     </div>
                 </div>
 
-                <!-- Tempat untuk menampilkan hasil GIF -->
-                <img id="gif-result" src="" alt="Hasil GIF" style="display: none;">
+                <!-- Hasil GIF tidak lagi ditampilkan -->
             </div>
             
         </div>
     </div>
     
-    <!-- Library untuk membuat GIF (offline, via CDN) -->
-    <!-- Pastikan gif.js di-host di server yang sama atau izinkan CORS jika dari CDN.
-         File gif.worker.js harus berada di 'js/' relatif terhadap index.html
-         jika menggunakan workerScript: 'js/gif.worker.js'
-    -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
+    <!-- Library untuk membuat GIF (DIHAPUS) -->
     
     <!-- Hubungkan ke file JavaScript utama -->
     <script type="module" src="js/app.js"></script>

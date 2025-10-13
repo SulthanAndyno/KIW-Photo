@@ -1,17 +1,24 @@
-/* === PALET WARNA ARCADE RETRO === */
 :root {
     --bg-dark: #0D0D0D;
     --cyan-neon: #00E5FF;
     --magenta-neon: #FF007F;
     --yellow-pixel: #FFE600;
     --green-neon: #39FF14;
-    --red-alert: #FF3333; /* Warna baru untuk error/peringatan */
-    --font-primary: 'Space Mono', monospace;
-    --font-heading: 'Press Start 2P', cursive;
-    --font-alt: 'Orbitron', sans-serif; /* Untuk variasi judul/display */
+    --red-alert: #FF3333; /* Warna untuk error/peringatan */
+
+    /* Font standar sistem, tanpa Google Fonts */
+    --font-primary: ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', monospace;
+    --font-heading: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    --font-alt: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
 }
 
 /* === GAYA DASAR & FONT === */
+/* Pastikan HTML dan Body mengambil tinggi penuh dan latar belakang gelap */
+html, body {
+    height: 100%;
+    background-color: var(--bg-dark); /* Pastikan background gelap */
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -20,7 +27,6 @@
 
 body {
     font-family: var(--font-primary); /* Default font lebih readable */
-    background-color: var(--bg-dark);
     color: var(--cyan-neon);
     display: flex;
     justify-content: center;
@@ -45,9 +51,10 @@ body {
 #start-screen {
     text-align: center;
     padding: 20px;
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+    background-color: rgba(0, 0, 0, 0.7); /* Lebih gelap */
+    border-radius: 5px; /* Radius lebih kecil */
+    border: 2px solid var(--cyan-neon); /* Border simpel */
+    /* box-shadow dihapus */
     width: 100%; /* Agar memenuhi container */
 }
 
@@ -55,7 +62,7 @@ body {
     font-family: var(--font-heading);
     font-size: 2rem;
     color: var(--yellow-pixel);
-    text-shadow: 4px 4px 0 var(--magenta-neon);
+    /* text-shadow dihapus */
     margin-bottom: 20px;
 }
 
@@ -94,10 +101,10 @@ body {
     padding-bottom: 56.25%; /* Rasio 16:9 (9/16 * 100%) - default modern webcam */
     height: 0; /* Penting untuk padding-bottom trick */
     overflow: hidden;
-    border: 8px solid var(--cyan-neon);
-    box-shadow: 0 0 15px var(--cyan-neon), 6px 6px 0 var(--magenta-neon);
+    border: 4px solid var(--cyan-neon); /* Border lebih simpel dan tidak terlalu tebal */
+    /* box-shadow dihapus */
     background-color: #000; /* Latar belakang untuk pillarbox/letterbox */
-    transition: box-shadow 0.3s ease-in-out;
+    transition: border-color 0.3s ease-in-out; /* Transisi border saja */
 }
 
 .photobooth video, .photobooth canvas {
@@ -121,7 +128,7 @@ body {
 }
 
 .options-group {
-    border: 4px solid var(--yellow-pixel);
+    border: 2px solid var(--yellow-pixel); /* Border lebih tipis */
     padding: 10px;
     display: flex;
     flex-wrap: wrap;
@@ -129,6 +136,7 @@ body {
     justify-content: center;
     align-items: center;
     position: relative;
+    /* box-shadow dihapus */
 }
 .options-group h3 {
     font-family: var(--font-heading);
@@ -137,7 +145,7 @@ body {
     width: 100%; /* Pastikan judul mengambil lebar penuh */
     text-align: center;
     margin-bottom: 5px;
-    text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+    /* text-shadow dihapus */
 }
 
 
@@ -146,46 +154,45 @@ button, .download-btn {
     font-family: var(--font-heading);
     background-color: var(--bg-dark);
     color: var(--cyan-neon);
-    border: 3px solid var(--cyan-neon); /* Border lebih kecil */
+    border: 2px solid var(--cyan-neon); /* Border lebih kecil */
     padding: 8px 12px; /* Padding lebih kecil */
     cursor: pointer;
     text-transform: uppercase;
-    transition: all 0.2s ease-in-out;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out; /* Transisi yang lebih halus */
     text-decoration: none;
     display: inline-flex; /* Menggunakan flexbox untuk alignment konten */
     justify-content: center;
     align-items: center;
     font-size: 0.6rem; 
     position: relative;
-    overflow: hidden; /* Untuk efek hover */
+    overflow: hidden; 
 }
 
-button:hover:not(:disabled), .download-btn:hover { /* :not(:disabled) agar hover tidak berfungsi pada tombol disabled */
+button:hover:not(:disabled), .download-btn:hover { 
     background-color: var(--cyan-neon);
     color: var(--bg-dark);
-    box-shadow: 0 0 10px var(--cyan-neon), 4px 4px 0 var(--green-neon);
-    transform: translate(-2px, -2px);
+    border-color: var(--cyan-neon); /* Pertahankan warna border */
+    /* box-shadow dan transform dihapus */
 }
 
-button:disabled { /* Gaya untuk tombol yang disabled */
+button:disabled { 
     cursor: not-allowed;
     opacity: 0.6;
     background-color: #333;
     border-color: #555;
     color: #AAA;
-    box-shadow: none;
-    transform: none;
+    /* box-shadow dan transform dihapus */
 }
 
 button.active {
     background-color: var(--magenta-neon);
     color: var(--yellow-pixel);
     border-color: var(--magenta-neon);
-    box-shadow: 0 0 10px var(--magenta-neon), 2px 2px 0 var(--yellow-pixel);
+    /* box-shadow dihapus */
 }
 
 button.active:hover {
-    box-shadow: 0 0 15px var(--magenta-neon), 6px 6px 0 var(--yellow-pixel);
+    /* box-shadow dihapus */
 }
 
 /* --- Tombol Utama (Snap, Start) --- */
@@ -193,10 +200,10 @@ button.active:hover {
     width: 100%;
     padding: 15px;
     font-size: 1rem;
-    border-width: 4px;
+    border-width: 3px; /* Border sedikit lebih tebal untuk main btn */
 }
 .main-btn:hover:not(:disabled) {
-    box-shadow: 0 0 15px var(--cyan-neon), 6px 6px 0 var(--green-neon);
+    /* box-shadow dihapus */
 }
 
 #snap {
@@ -204,14 +211,14 @@ button.active:hover {
     color: white;
     border-color: var(--magenta-neon);
     font-size: 1.2rem;
-    box-shadow: 0 0 10px var(--magenta-neon);
+    /* box-shadow dihapus */
 }
 
 #snap:hover:not(:disabled) {
     background-color: var(--yellow-pixel);
     color: var(--bg-dark);
     border-color: var(--yellow-pixel);
-    box-shadow: 0 0 15px var(--yellow-pixel), 6px 6px 0 var(--magenta-neon);
+    /* box-shadow dihapus */
 }
 
 .action-btn {
@@ -220,44 +227,33 @@ button.active:hover {
     padding: 10px;
 }
 
-.gif-controls {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    width: 100%;
-    flex-wrap: wrap; /* Agar bisa wrap di mobile */
-    justify-content: center;
-}
-#add-to-gif, #create-gif {
-    flex-basis: 45%; /* Untuk rata dua kolom */
-    font-size: 0.6rem;
-}
-#gif-status, #multi-frame-status { /* Gaya untuk status multi-frame juga */
-    color: var(--green-neon);
-    flex-basis: 100%; /* Ambil lebar penuh */
-    text-align: center;
-    font-size: 0.5rem;
-    margin-top: 5px;
-}
-#multi-frame-status {
-    color: var(--yellow-pixel); /* Warna berbeda untuk status multi-frame */
+/* Status untuk multi-frame */
+#multi-frame-status { 
+    color: var(--yellow-pixel); 
     font-family: var(--font-alt);
     font-size: 0.6rem;
+    text-align: center;
+    width: 100%; /* Agar mengambil lebar penuh */
+    margin-top: 5px;
+    /* text-shadow dan animasi dihapus */
 }
-
 
 .action-group {
     flex-direction: row; /* Kembali ke baris */
     flex-wrap: wrap;
+    justify-content: center; /* Pusatkan item */
+    gap: 10px; /* Spasi antar tombol */
 }
 .download-area {
     width: 100%;
     display: flex;
     gap: 10px;
-    margin-top: 10px; /* Jarak dari gif-controls */
+    margin-top: 10px; 
+    justify-content: center; /* Pusatkan tombol */
 }
 .download-btn, #reset-btn {
     flex-grow: 1;
+    max-width: 48%; /* Agar bisa rata dua kolom */
     text-align: center;
     font-size: 0.6rem;
 }
@@ -278,23 +274,14 @@ button.active:hover {
     to { transform: rotate(360deg); }
 }
 
-/* Tampilan hasil GIF */
-#gif-result {
-    margin-top: 20px;
-    border: 4px solid var(--green-neon);
-    max-width: 100%; 
-    height: auto;
-    box-shadow: 0 0 15px var(--green-neon);
-}
-
 /* --- Efek Visual Lainnya (Opsional) --- */
 .feedback-flash {
     animation: flash-border 0.2s ease-out;
 }
 
 @keyframes flash-border {
-    0% { border-color: var(--yellow-pixel); box-shadow: 0 0 20px var(--yellow-pixel); }
-    100% { border-color: var(--cyan-neon); box-shadow: 0 0 15px var(--cyan-neon); }
+    0% { border-color: var(--yellow-pixel); } /* Hanya ubah warna border */
+    100% { border-color: var(--cyan-neon); } /* Kembali ke border asli */
 }
 
 /* === MEDIA QUERY: LANDSCAPE / DESKTOP MODE === */
@@ -320,7 +307,6 @@ button.active:hover {
 
     .photobooth-area {
         width: 650px; /* Lebar absolut untuk area booth */
-        /* Biarkan padding-bottom pada .photobooth untuk menjaga aspek rasio */
     }
 
     .photobooth {
@@ -361,24 +347,16 @@ button.active:hover {
         padding: 25px;
     }
     
-    .gif-controls {
-        flex-direction: column; /* Ubah kembali jadi kolom */
-        flex-wrap: nowrap;
-    }
-    
-    #gif-status, #multi-frame-status {
-        order: -1; /* Posisikan status di atas tombol GIF / multi-frame */
-        margin-bottom: 10px;
-        margin-top: 0;
-    }
-    
-    #add-to-gif, #create-gif {
-        flex-basis: auto; /* Hapus basis persentase */
-        width: 90%; /* Agar tombol rata dengan lainnya */
+    #multi-frame-status {
+        margin-top: 10px; /* Sesuaikan margin di desktop */
     }
 
     .download-area {
-        flex-direction: row;
+        flex-direction: column; /* Kembali ke kolom untuk desktop agar tombol download & reset sejajar vertikal */
         margin-top: 15px;
+        gap: 10px;
+    }
+    .download-btn, #reset-btn {
+        max-width: 90%; /* Sesuaikan lebar */
     }
 }
