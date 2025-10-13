@@ -11,11 +11,11 @@
     --font-heading: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
     --font-alt: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
 
-    /* Warna tambahan untuk frame Polaroid Coklat */
-    --polaroid-brown-main: #6B4423; /* Coklat utama */
-    --polaroid-brown-light: #A0724F; /* Coklat lebih terang untuk teks/highlight */
-    --polaroid-photo-border: #4F2E1B; /* Coklat gelap untuk border foto */
-    --polaroid-text-color: #DDDDDD; /* Warna teks untuk polaroid */
+    /* Warna tambahan untuk frame Polaroid Putih Minimalis */
+    --polaroid-white-main: #FFFFFF; /* Putih utama */
+    --polaroid-white-light: #F0F0F0; /* Putih lebih terang untuk highlight/area teks */
+    --polaroid-photo-border: #BBBBBB; /* Abu-abu terang untuk border foto */
+    --polaroid-text-color: #333333; /* Warna teks gelap */
 
     /* Warna tambahan untuk frame Retro Minimalis */
     --retro-dark-bg: #1A1A1A; /* Background gelap untuk strip film */
