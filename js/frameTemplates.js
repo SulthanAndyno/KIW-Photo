@@ -2,8 +2,6 @@
 
 /**
  * Mengambil nilai variabel CSS dari root.
- * @param {string} varName - Nama variabel CSS (misal: '--cyan-neon').
- * @returns {string} Nilai variabel CSS.
  */
 function getComputedCssVar(varName) {
     return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
@@ -15,8 +13,8 @@ function getComputedCssVar(varName) {
  * @param {number} canvasWidth - Lebar total canvas.
  * @param {number} canvasHeight - Tinggi total canvas.
  * @param {ImageData[]} capturedFrames - Array berisi ImageData foto yang sudah diambil.
- * @param {number} currentLiveFrameIndex - Indeks frame yang sedang live (untuk placeholder "CLICK TO CAPTURE").
- * @param {ImageData|null} liveFrameWithFilter - ImageData dari frame video live saat ini (sudah di-filter).
+ * @param {number} currentLiveFrameIndex - Indeks frame yang sedang menampilkan pratinjau live.
+ * @param {ImageData|null} liveFrameWithFilter - ImageData dari frame video live saat ini (sudah difilter).
  */
 export function drawMultiPolaroid(ctx, canvasWidth, canvasHeight, capturedFrames, currentLiveFrameIndex, liveFrameWithFilter) {
     // Dapatkan variabel CSS
@@ -25,14 +23,14 @@ export function drawMultiPolaroid(ctx, canvasWidth, canvasHeight, capturedFrames
     const polaroidPhotoBorder = getComputedCssVar('--polaroid-photo-border');
     const polaroidTextColor = getComputedCssVar('--polaroid-text-color');
     const bgDark = getComputedCssVar('--bg-dark');
-    const cyanNeon = getComputedCssVar('--cyan-neon'); // Untuk placeholder
+    const cyanNeon = getComputedCssVar('--cyan-neon');
     const fontHeading = getComputedCssVar('--font-heading');
     const fontPrimary = getComputedCssVar('--font-primary');
     
     const MAX_MULTI_FRAMES = 4;
     const paddingRatio = 0.04;
-    const photoBorderRatio = 0.015; // Border di sekeliling area foto
-    const textSpaceRatio = 0.20; // 20% dari tinggi frame untuk area teks
+    const photoBorderRatio = 0.015;
+    const textSpaceRatio = 0.20;
 
     const padding = canvasWidth * paddingRatio;
     const photoBorderSize = canvasWidth * photoBorderRatio;
@@ -41,16 +39,16 @@ export function drawMultiPolaroid(ctx, canvasWidth, canvasHeight, capturedFrames
     const frameSlotWidth = (canvasWidth - padding * 3) / 2;
     const frameSlotHeight = (canvasHeight - padding * 3) / 2;
 
-    const photoAreaHeight = frameSlotHeight * (1 - textSpaceRatio); // Tinggi area foto
-    const textAreaHeight = frameSlotHeight * textSpaceRatio; // Tinggi area teks
+    const photoAreaHeight = frameSlotHeight * (1 - textSpaceRatio);
+    const textAreaHeight = frameSlotHeight * textSpaceRatio;
 
-    // --- Background Keseluruhan Kolase ---
-    ctx.fillStyle = polaroidWhiteMain; // Putih utama sebagai background seluruh kolase
+    // Background keseluruhan kolase
+    ctx.fillStyle = polaroidWhiteMain;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-    // Garis batas luar kolase (minimalis, abu-abu terang)
+    // Garis batas luar kolase
     ctx.strokeStyle = polaroidPhotoBorder;
-    ctx.lineWidth = 2; // Lebih tipis
+    ctx.lineWidth = 2;
     ctx.strokeRect(0, 0, canvasWidth, canvasHeight);
 
     for (let i = 0; i < MAX_MULTI_FRAMES; i++) {
@@ -60,7 +58,7 @@ export function drawMultiPolaroid(ctx, canvasWidth, canvasHeight, capturedFrames
         const xOffset = padding + col * (frameSlotWidth + padding);
         const yOffset = padding + row * (frameSlotHeight + padding);
 
-        // Background setiap frame polaroid (putih terang)
+        // Background setiap frame polaroid
         ctx.fillStyle = polaroidWhiteLight;
         ctx.fillRect(xOffset, yOffset, frameSlotWidth, frameSlotHeight);
 
@@ -70,32 +68,30 @@ export function drawMultiPolaroid(ctx, canvasWidth, canvasHeight, capturedFrames
         const photoInnerW = frameSlotWidth - photoBorderSize * 2;
         const photoInnerH = photoAreaHeight - photoBorderSize * 2;
         
-        ctx.fillStyle = bgDark; // Background gelap untuk area foto
+        ctx.fillStyle = bgDark;
         ctx.fillRect(photoInnerX, photoInnerY, photoInnerW, photoInnerH);
         
-        ctx.strokeStyle = polaroidPhotoBorder; // Border foto abu-abu gelap
-        ctx.lineWidth = 1; // Lebih tipis
+        ctx.strokeStyle = polaroidPhotoBorder;
+        ctx.lineWidth = 1;
         ctx.strokeRect(photoInnerX, photoInnerY, photoInnerW, photoInnerH);
 
         // Area teks bawah
         const textBgY = yOffset + photoAreaHeight;
-        ctx.fillStyle = polaroidWhiteLight; // Putih terang untuk area teks
+        ctx.fillStyle = polaroidWhiteLight;
         ctx.fillRect(xOffset, textBgY, frameSlotWidth, textAreaHeight);
 
-        ctx.fillStyle = polaroidTextColor; // Warna teks gelap
+        ctx.fillStyle = polaroidTextColor;
         ctx.font = `${Math.floor(textAreaHeight * 0.4)}px ${fontPrimary}`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(`FRAME ${i + 1}`, xOffset + frameSlotWidth / 2, textBgY + textAreaHeight / 2);
 
-        // --- Gambar foto atau placeholder ---
+        // Gambar foto atau placeholder
         let imgDataToDraw = null;
-        let destX, destY, destWidth, destHeight;
-
-        destX = photoInnerX;
-        destY = photoInnerY;
-        destWidth = photoInnerW;
-        destHeight = photoInnerH;
+        const destX = photoInnerX;
+        const destY = photoInnerY;
+        const destWidth = photoInnerW;
+        const destHeight = photoInnerH;
 
         if (capturedFrames[i]) {
             imgDataToDraw = capturedFrames[i];
@@ -109,14 +105,16 @@ export function drawMultiPolaroid(ctx, canvasWidth, canvasHeight, capturedFrames
 
             let drawX = 0, drawY = 0, drawWidth = imgDataToDraw.width, drawHeight = imgDataToDraw.height;
 
-            if (aspectRatioSrc > aspectRatioDest) {
+            // Hitung area sumber untuk mempertahankan rasio aspek
+            if (aspectRatioSrc > aspectRatioDest) { // Sumber lebih lebar, potong horizontal
                 drawWidth = imgDataToDraw.height * aspectRatioDest;
                 drawX = (imgDataToDraw.width - drawWidth) / 2;
-            } else {
+            } else { // Sumber lebih tinggi, potong vertikal
                 drawHeight = imgDataToDraw.width / aspectRatioDest;
                 drawY = (imgDataToDraw.height - drawHeight) / 2;
             }
             
+            // Gambar ImageData ke canvas sementara untuk penskalaan
             const tempOffscreenCanvas = document.createElement('canvas');
             const tempOffscreenCtx = tempOffscreenCanvas.getContext('2d');
             tempOffscreenCanvas.width = imgDataToDraw.width;
@@ -126,12 +124,11 @@ export function drawMultiPolaroid(ctx, canvasWidth, canvasHeight, capturedFrames
             ctx.drawImage(tempOffscreenCanvas, drawX, drawY, drawWidth, drawHeight, destX, destY, destWidth, destHeight);
 
         } else {
-            // Placeholder "standby" yang minimalis
-            ctx.fillStyle = 'rgba(200,200,200,0.9)'; // Abu-abu muda transparan
+            // Placeholder standby
+            ctx.fillStyle = 'rgba(200,200,200,0.9)';
             ctx.fillRect(destX, destY, destWidth, destHeight);
 
-            // Teks "STANDBY" atau "CLICK TO CAPTURE"
-            ctx.fillStyle = cyanNeon; // Gunakan cyan neon untuk kontras
+            ctx.fillStyle = cyanNeon;
             ctx.font = `${Math.floor(destHeight * 0.1)}px ${fontHeading}`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -147,8 +144,8 @@ export function drawMultiPolaroid(ctx, canvasWidth, canvasHeight, capturedFrames
  * @param {number} canvasWidth - Lebar total canvas.
  * @param {number} canvasHeight - Tinggi total canvas.
  * @param {ImageData[]} capturedFrames - Array berisi ImageData foto yang sudah diambil.
- * @param {number} currentLiveFrameIndex - Indeks frame yang sedang live (untuk placeholder "CLICK TO CAPTURE").
- * @param {ImageData|null} liveFrameWithFilter - ImageData dari frame video live saat ini (sudah di-filter).
+ * @param {number} currentLiveFrameIndex - Indeks frame yang sedang menampilkan pratinjau live.
+ * @param {ImageData|null} liveFrameWithFilter - ImageData dari frame video live saat ini (sudah difilter).
  */
 export function drawMultiRetro(ctx, canvasWidth, canvasHeight, capturedFrames, currentLiveFrameIndex, liveFrameWithFilter) {
     // Dapatkan variabel CSS
@@ -160,8 +157,8 @@ export function drawMultiRetro(ctx, canvasWidth, canvasHeight, capturedFrames, c
     
     const MAX_MULTI_FRAMES = 4;
     const paddingRatio = 0.04;
-    const filmStripBorderRatio = 0.08; // Tebal border film strip
-    const perforationRatio = 0.02; // Ukuran perforasi
+    const filmStripBorderRatio = 0.08;
+    const perforationRatio = 0.02;
 
     const padding = canvasWidth * paddingRatio;
     const filmStripBorder = canvasWidth * filmStripBorderRatio;
@@ -171,13 +168,13 @@ export function drawMultiRetro(ctx, canvasWidth, canvasHeight, capturedFrames, c
     const frameSlotWidth = (canvasWidth - padding * 3) / 2;
     const frameSlotHeight = (canvasHeight - padding * 3) / 2;
 
-    // --- Background Keseluruhan Kolase ---
-    ctx.fillStyle = retroDarkBg; // Background gelap film strip
+    // Background keseluruhan kolase
+    ctx.fillStyle = retroDarkBg;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
     // Garis batas luar kolase
     ctx.strokeStyle = retroLightBorder;
-    ctx.lineWidth = 2; // Lebih tipis
+    ctx.lineWidth = 2;
     ctx.strokeRect(0, 0, canvasWidth, canvasHeight);
 
     for (let i = 0; i < MAX_MULTI_FRAMES; i++) {
@@ -197,34 +194,30 @@ export function drawMultiRetro(ctx, canvasWidth, canvasHeight, capturedFrames, c
         const photoInnerW = frameSlotWidth - filmStripBorder * 2;
         const photoInnerH = frameSlotHeight - filmStripBorder * 2;
         
-        ctx.fillStyle = '#000000'; // Background hitam untuk area foto
+        ctx.fillStyle = '#000000';
         ctx.fillRect(photoInnerX, photoInnerY, photoInnerW, photoInnerH);
         
-        ctx.strokeStyle = cyanNeon; // Border tipis di sekeliling area foto
+        ctx.strokeStyle = cyanNeon;
         ctx.lineWidth = 1;
         ctx.strokeRect(photoInnerX, photoInnerY, photoInnerW, photoInnerH);
 
-        // Perforasi (lubang film) - di bagian atas dan bawah border
+        // Perforasi (lubang film)
         ctx.fillStyle = retroLightBorder;
-        const numPerfs = Math.floor((photoInnerW) / (perforationSize * 2)); // Jumlah perforasi di sepanjang lebar foto
+        const numPerfs = Math.floor((photoInnerW) / (perforationSize * 2));
         const startXPerf = photoInnerX + (photoInnerW - (numPerfs * perforationSize * 2 - perforationSize)) / 2;
         
         for(let p = 0; p < numPerfs; p++) {
             const px = startXPerf + p * perforationSize * 2;
-            // Atas
             ctx.fillRect(px, yOffset + filmStripBorder / 2 - perforationSize / 2, perforationSize, perforationSize); 
-            // Bawah
             ctx.fillRect(px, yOffset + frameSlotHeight - filmStripBorder / 2 - perforationSize / 2, perforationSize, perforationSize); 
         }
 
-        // --- Gambar foto atau placeholder ---
+        // Gambar foto atau placeholder
         let imgDataToDraw = null;
-        let destX, destY, destWidth, destHeight;
-
-        destX = photoInnerX;
-        destY = photoInnerY;
-        destWidth = photoInnerW;
-        destHeight = photoInnerH;
+        const destX = photoInnerX;
+        const destY = photoInnerY;
+        const destWidth = photoInnerW;
+        const destHeight = photoInnerH;
 
         if (capturedFrames[i]) {
             imgDataToDraw = capturedFrames[i];
@@ -238,14 +231,16 @@ export function drawMultiRetro(ctx, canvasWidth, canvasHeight, capturedFrames, c
 
             let drawX = 0, drawY = 0, drawWidth = imgDataToDraw.width, drawHeight = imgDataToDraw.height;
 
-            if (aspectRatioSrc > aspectRatioDest) {
+            // Hitung area sumber untuk mempertahankan rasio aspek
+            if (aspectRatioSrc > aspectRatioDest) { // Sumber lebih lebar, potong horizontal
                 drawWidth = imgDataToDraw.height * aspectRatioDest;
                 drawX = (imgDataToDraw.width - drawWidth) / 2;
-            } else {
+            } else { // Sumber lebih tinggi, potong vertikal
                 drawHeight = imgDataToDraw.width / aspectRatioDest;
                 drawY = (imgDataToDraw.height - drawHeight) / 2;
             }
             
+            // Gambar ImageData ke canvas sementara untuk penskalaan
             const tempOffscreenCanvas = document.createElement('canvas');
             const tempOffscreenCtx = tempOffscreenCanvas.getContext('2d');
             tempOffscreenCanvas.width = imgDataToDraw.width;
@@ -255,11 +250,10 @@ export function drawMultiRetro(ctx, canvasWidth, canvasHeight, capturedFrames, c
             ctx.drawImage(tempOffscreenCanvas, drawX, drawY, drawWidth, drawHeight, destX, destY, destWidth, destHeight);
 
         } else {
-            // Placeholder "standby" yang minimalis
+            // Placeholder standby
             ctx.fillStyle = 'rgba(20,20,20,0.9)'; 
             ctx.fillRect(destX, destY, destWidth, destHeight);
 
-            // Teks "STANDBY" atau "CLICK TO CAPTURE"
             ctx.fillStyle = magentaNeon; 
             ctx.font = `${Math.floor(destHeight * 0.1)}px ${fontHeading}`;
             ctx.textAlign = 'center';
