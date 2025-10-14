@@ -2,7 +2,7 @@ import * as Camera from './camera.js';
 import { applyJsFilter } from './effects.js';
 import { drawMultiPolaroid, drawMultiRetro } from './frameTemplates.js';
 
-// === MENYIAPKAN ELEMEN DOM ===
+// Elemen DOM yang digunakan
 const startScreen = document.getElementById('start-screen');
 const startBtn = document.getElementById('start-btn');
 const startBtnSpinner = startBtn.querySelector('.spinner');
@@ -21,8 +21,7 @@ const staticEffectBtns = document.querySelectorAll('.static-effect-btn');
 
 const multiFrameStatus = document.getElementById('multi-frame-status');
 
-
-// === VARIABEL STATE APLIKASI ===
+// Variabel status aplikasi
 let currentTemplate = 'none'; 
 let currentStaticEffect = 'none'; 
 let capturedImageData = null; 
@@ -34,14 +33,17 @@ const MAX_MULTI_FRAMES = 4;
 
 const templateImages = {}; 
 
+// Inisialisasi modul kamera
 Camera.initCamera(video, canvas, ctx);
 
+// Atur tombol aktif awal
 document.querySelector('.template-btn[data-template="none"]').classList.add('active');
 document.querySelector('.static-effect-btn[data-effect="none"]').classList.add('active');
 
 
-// === FUNGSI UTAMA APLIKASI ===
+// --- FUNGSI INTI APLIKASI ---
 
+/** Memuat gambar template statis (jika ada). */
 function preloadTemplates() {
     templateBtns.forEach(btn => {
         const templateSrc = btn.dataset.template;
@@ -50,12 +52,13 @@ function preloadTemplates() {
             img.crossOrigin = "anonymous";
             img.src = templateSrc;
             templateImages[templateSrc] = img;
-            img.onerror = () => console.error(`Failed to load template image: ${templateSrc}`);
+            img.onerror = () => console.error(`Gagal memuat gambar template: ${templateSrc}`);
         }
     });
 }
 preloadTemplates();
 
+/** Memulai kamera dan beralih ke UI photobox. */
 async function appStartCamera() {
     startBtn.disabled = true;
     startBtnSpinner.style.display = 'inline-block';
@@ -66,6 +69,7 @@ async function appStartCamera() {
         startScreen.style.display = 'none';
         photoboxUI.style.display = 'flex';
         
+        // Reset status untuk sesi baru
         isPhotoTaken = false;
         currentMultiFrameIndex = 0;
         snapBtn.textContent = 'AMBIL FOTO!';
@@ -74,7 +78,7 @@ async function appStartCamera() {
         requestAnimationFrame(appRenderLoop);
         
     } catch (err) {
-        console.error("Failed to start camera:", err);
+        console.error("Gagal memulai kamera:", err);
         let errorMessage = "Tidak bisa mengakses kamera! ";
         if (err.name === "NotAllowedError") {
             errorMessage += "Pastikan Anda memberikan izin akses kamera di browser Anda.";
@@ -92,52 +96,48 @@ async function appStartCamera() {
 }
 
 /**
- * Loop rendering utama aplikasi untuk menampilkan video live dan efek.
- * Akan terus berjalan selama kamera aktif dan belum ada foto yang diambil.
+ * Loop rendering utama untuk menampilkan pratinjau video live dan efek.
+ * Berjalan selama kamera aktif dan belum ada foto yang diambil.
  */
 function appRenderLoop() {
     if (!Camera.isStreamActive() || isPhotoTaken) {
         return; 
     }
 
-    if (currentTemplate.startsWith('multi-') && currentMultiFrameIndex < MAX_MULTI_FRAMES) {
-        // --- PERBAIKAN BUG DISINI ---
-        // Panggil Camera.drawLiveFrame dan ambil return value-nya
-        // Return value adalah ImageData yang sudah difilter dan digambar ke canvas (jika ada filterCallback)
-        const liveFrameWithFilter = Camera.drawLiveFrame(imageData => {
-            applyJsFilter(imageData, currentStaticEffect);
-        });
-
-        // Sekarang, panggil fungsi untuk menggambar layout multi-frame dengan liveFrameWithFilter yang sudah benar
-        appDrawMultiPhotoLayout(liveFrameWithFilter); 
-
-        requestAnimationFrame(appRenderLoop);
-        return;
-    }
-
-    // --- Logika untuk Single Photo Live Preview (yang sudah ada) ---
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    Camera.drawLiveFrame(imageData => {
+
+    // Ambil frame live dari kamera dan terapkan filter JS untuk pratinjau.
+    const liveFrameWithFilter = Camera.drawLiveFrame(imageData => {
         applyJsFilter(imageData, currentStaticEffect);
     });
+
+    // Jika template multi-frame, gambar kolase dengan pratinjau live di slot aktif.
+    if (currentTemplate.startsWith('multi-') && currentMultiFrameIndex < MAX_MULTI_FRAMES) {
+        appDrawMultiPhotoLayout(liveFrameWithFilter); 
+    }
+    // Untuk mode foto tunggal, Camera.drawLiveFrame sudah menangani gambar ke canvas.
+
     requestAnimationFrame(appRenderLoop);
 }
 
+/** Mengambil foto dan menangani logika foto tunggal atau multi-foto. */
 function appTakePhoto() {
     if (!Camera.isStreamActive() || !Camera.getCurrentVideoFrame()) {
-        console.warn("Video stream not ready or active, or no current frame to capture.");
+        console.warn("Stream video tidak siap atau tidak aktif.");
         return;
     }
 
-    const currentFrame = Camera.getCurrentVideoFrame();
+    const currentRawFrame = Camera.getCurrentVideoFrame();
     
+    // Buat objek ImageData baru untuk diproses agar frame asli tidak dimodifikasi.
     let processedFrame = new ImageData(
-        new Uint8ClampedArray(currentFrame.data),
-        currentFrame.width,
-        currentFrame.height
+        new Uint8ClampedArray(currentRawFrame.data),
+        currentRawFrame.width,
+        currentRawFrame.height
     );
     applyJsFilter(processedFrame, currentStaticEffect);
 
+    // Tangani pengambilan foto multi-frame
     if (currentTemplate.startsWith('multi-')) {
         if (currentMultiFrameIndex < MAX_MULTI_FRAMES) {
             capturedFramesForMultiLayout[currentMultiFrameIndex] = processedFrame;
@@ -146,28 +146,31 @@ function appTakePhoto() {
             multiFrameStatus.textContent = `MENGAMBIL FOTO ${currentMultiFrameIndex}/${MAX_MULTI_FRAMES}...`;
             snapBtn.textContent = `AMBIL FOTO ${currentMultiFrameIndex < MAX_MULTI_FRAMES ? currentMultiFrameIndex + 1 : 'FINAL'}`; 
 
-            appDrawMultiPhotoLayout(null); // Setelah ambil foto, live preview tidak diperlukan di sini
+            appDrawMultiPhotoLayout(null); // Gambar ulang kolase tanpa pratinjau live
 
+            // Umpan balik visual untuk pengambilan
             const photobooth = document.querySelector('.photobooth');
             photobooth.classList.add('feedback-flash');
             setTimeout(() => photobooth.classList.remove('feedback-flash'), 300);
 
+            // Jika semua frame telah diambil dalam mode multi-frame.
             if (currentMultiFrameIndex === MAX_MULTI_FRAMES) {
                 snapBtn.style.display = 'none';
                 downloadLink.style.display = 'inline-block';
                 resetBtn.style.display = 'inline-block';
                 multiFrameStatus.textContent = "KOLASE SELESAI!";
-                isPhotoTaken = true;
+                isPhotoTaken = true; // Tandai sudah diambil untuk menghentikan loop render
             }
         }
-        return;
+        return; // Keluar karena multi-frame memiliki alur logikanya sendiri
     }
 
-    isPhotoTaken = true;
+    // Tangani pengambilan foto tunggal
+    isPhotoTaken = true; // Tandai sudah diambil untuk menghentikan loop render
     snapBtn.disabled = true;
-    capturedImageData = processedFrame;
+    capturedImageData = processedFrame; // Simpan gambar yang diambil dan difilter
     
-    appApplyFinalComposite();
+    appApplyFinalComposite(); // Terapkan template dan finalisasi
     
     snapBtn.style.display = 'none';
     downloadLink.style.display = 'inline-block';
@@ -177,47 +180,41 @@ function appTakePhoto() {
     photobooth.classList.add('feedback-flash');
     setTimeout(() => photobooth.classList.remove('feedback-flash'), 300);
 
+    // Logika ini menjaga tombol snap tersembunyi dan loop berhenti setelah foto tunggal diambil.
     setTimeout(() => {
         snapBtn.disabled = false;
-        snapBtn.style.display = 'block'; 
-        isPhotoTaken = false; 
-        requestAnimationFrame(appRenderLoop); 
     }, 500);
 }
 
+/** Menerapkan template (jika ada) ke foto tunggal yang sudah diambil. */
 function appApplyFinalComposite() {
     if (!capturedImageData) {
-        console.warn("No captured image data to composite for single photo.");
+        console.warn("Tidak ada data gambar yang diambil untuk komposit foto tunggal.");
         return;
     }
 
-    let imageDataForComposite = new ImageData(
-        new Uint8ClampedArray(capturedImageData.data),
-        capturedImageData.width,
-        capturedImageData.height
-    );
-    
-    applyJsFilter(imageDataForComposite, currentStaticEffect);
-    
+    // Gambar gambar yang diambil dan difilter ke canvas.
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.putImageData(imageDataForComposite, 0, 0);
+    ctx.putImageData(capturedImageData, 0, 0);
     
+    // Terapkan template jika bukan 'none' dan bukan template multi-frame.
     if (currentTemplate !== 'none' && !currentTemplate.startsWith('multi-')) {
         const templateImg = templateImages[currentTemplate];
         if (templateImg && templateImg.complete) {
             ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
             updateDownloadLink();
         } else if (templateImg) {
+            // Tangani pemuatan template secara asinkron
             templateImg.onload = () => {
                 ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
                 updateDownloadLink();
             };
             templateImg.onerror = () => {
-                console.error(`Error loading template image: ${currentTemplate}. Proceeding without template.`);
+                console.error(`Error memuat gambar template: ${currentTemplate}. Melanjutkan tanpa template.`);
                 updateDownloadLink();
             };
         } else {
-             console.warn(`Template image for ${currentTemplate} is not loaded or does not exist.`);
+             console.warn(`Gambar template untuk ${currentTemplate} tidak dimuat atau tidak ada.`);
              updateDownloadLink();
         }
     } else {
@@ -226,10 +223,10 @@ function appApplyFinalComposite() {
 }
 
 /**
- * Fungsi untuk menggambar layout multi-foto (kolase) langsung di canvas
- * dan menempatkan foto-foto yang sudah diambil ke slotnya.
- * DELEGASI KE frameTemplates.js UNTUK DESAIN TEMPLATE.
- * @param {ImageData|null} liveFrameWithFilter - ImageData dari frame video live saat ini (sudah di-filter).
+ * Menggambar layout kolase multi-foto di canvas,
+ * menempatkan foto yang diambil ke slotnya dan menunjukkan pratinjau live di slot saat ini.
+ * Pendelegasian desain template dilakukan di `frameTemplates.js`.
+ * @param {ImageData|null} liveFrameWithFilter - ImageData dari frame video live saat ini (sudah difilter).
  */
 function appDrawMultiPhotoLayout(liveFrameWithFilter = null) {
     const { width: canvasWidth, height: canvasHeight } = Camera.getCanvasDimensions();
@@ -240,7 +237,7 @@ function appDrawMultiPhotoLayout(liveFrameWithFilter = null) {
     } else if (currentTemplate === 'multi-retro') {
         drawMultiRetro(ctx, canvasWidth, canvasHeight, capturedFramesForMultiLayout, currentMultiFrameIndex, liveFrameWithFilter);
     } else {
-        console.warn("Invalid multi-frame template selected. Drawing blank canvas.");
+        // Fallback untuk template multi-frame yang tidak valid
         ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--bg-dark');
         ctx.fillRect(0, 0, canvasWidth, canvasHeight);
         ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--cyan-neon');
@@ -252,6 +249,7 @@ function appDrawMultiPhotoLayout(liveFrameWithFilter = null) {
     updateDownloadLink();
 }
 
+/** Memperbarui link unduh dengan konten canvas saat ini. */
 function updateDownloadLink() {
     if (canvas.width > 0 && canvas.height > 0) {
         downloadLink.href = canvas.toDataURL('image/png');
@@ -261,10 +259,11 @@ function updateDownloadLink() {
         downloadLink.href = '#';
         downloadLink.download = '';
         downloadLink.textContent = 'Download Foto (Tidak Ada)';
-        console.warn("Canvas is empty, cannot generate download link.");
+        console.warn("Canvas kosong, tidak bisa membuat link unduh.");
     }
 }
 
+/** Mereset aplikasi ke keadaan awal, menghentikan kamera dan membersihkan UI. */
 function appReset() {
     Camera.stopCameraStream();
     
@@ -286,6 +285,7 @@ function appReset() {
     downloadLink.style.display = 'none';
     resetBtn.style.display = 'none';
     
+    // Reset tombol aktif
     templateBtns.forEach(b => b.classList.remove('active'));
     document.querySelector('.template-btn[data-template="none"]').classList.add('active');
     staticEffectBtns.forEach(b => b.classList.remove('active'));
@@ -299,7 +299,7 @@ function appReset() {
 }
 
 
-// === EVENT LISTENERS ===
+// --- EVENT LISTENERS ---
 startBtn.addEventListener('click', appStartCamera);
 resetBtn.addEventListener('click', appReset);
 snapBtn.addEventListener('click', appTakePhoto);
@@ -313,6 +313,7 @@ templateBtns.forEach(btn => {
         btn.classList.add('active');
 
         if (currentTemplate.startsWith('multi-')) {
+            // Reset status khusus multi-frame
             capturedFramesForMultiLayout = [];
             currentMultiFrameIndex = 0;
             multiFrameStatus.style.display = 'inline';
@@ -320,28 +321,30 @@ templateBtns.forEach(btn => {
             snapBtn.textContent = `AMBIL FOTO ${currentMultiFrameIndex + 1}`;
             downloadLink.style.display = 'none';
 
-            isPhotoTaken = false; 
+            isPhotoTaken = false; // Izinkan urutan pengambilan baru
             if (Camera.isStreamActive()) {
-                requestAnimationFrame(appRenderLoop);
+                requestAnimationFrame(appRenderLoop); // Mulai ulang loop untuk pratinjau multi-frame
             }
         } else {
+            // Reset UI multi-frame jika beralih kembali ke tunggal
             multiFrameStatus.style.display = 'none';
             multiFrameStatus.textContent = '';
             snapBtn.textContent = 'AMBIL FOTO!';
             capturedFramesForMultiLayout = [];
 
             if (previousTemplate.startsWith('multi-') && currentMultiFrameIndex > 0) {
-                 isPhotoTaken = false;
+                 isPhotoTaken = false; // Jika foto diambil dalam mode multi, izinkan snap ulang dalam mode tunggal
                  if (Camera.isStreamActive()) requestAnimationFrame(appRenderLoop);
             }
         }
 
-        if(isPhotoTaken && !currentTemplate.startsWith('multi-')) { 
-            appApplyFinalComposite();
+        // Render ulang berdasarkan status saat ini
+        if (isPhotoTaken && !currentTemplate.startsWith('multi-')) { 
+            appApplyFinalComposite(); // Terapkan ulang template ke foto tunggal yang diambil
         } else if (currentTemplate.startsWith('multi-')) {
             appDrawMultiPhotoLayout(Camera.isStreamActive() && !isPhotoTaken ? Camera.getCurrentVideoFrame() : null);
         } else if (Camera.isStreamActive() && !isPhotoTaken) { 
-            requestAnimationFrame(appRenderLoop);
+            requestAnimationFrame(appRenderLoop); // Lanjutkan pratinjau live untuk foto tunggal
         }
     });
 });
@@ -353,16 +356,18 @@ staticEffectBtns.forEach(btn => {
         staticEffectBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         
-        if(currentTemplate.startsWith('multi-')) { 
+        // Render ulang berdasarkan status saat ini untuk menerapkan efek baru
+        if (currentTemplate.startsWith('multi-')) { 
             appDrawMultiPhotoLayout(Camera.isStreamActive() && !isPhotoTaken ? Camera.getCurrentVideoFrame() : null);
-        } else if(isPhotoTaken && capturedImageData) { 
+        } else if (isPhotoTaken && capturedImageData) { 
             appApplyFinalComposite();
         } else if (Camera.isStreamActive()) { 
-            // Loop rendering sudah berjalan, tidak perlu memanggil lagi
+            // Loop render akan mengambil efek baru
         }
     });
 });
 
+// Pengaturan status DOM awal
 document.addEventListener('DOMContentLoaded', () => {
     resetBtn.style.display = 'none';
     downloadLink.style.display = 'none';
