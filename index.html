@@ -5,19 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snap & Snap 📷 Pro</title>
     
-    <!-- Impor Font Futuristik dari Google Fonts (DIHAPUS) -->
-    <!-- <link rel="preconnect" href="https://fonts.googleapis.com"> -->
-    <!-- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> -->
-    <!-- <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Press+Start+2P&family=Space+Mono&display=swap" rel="stylesheet"> -->
-    
-    <!-- Hubungkan ke file CSS utama -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
     <div class="container">
 
-        <!-- 1. TAMPILAN AWAL -->
         <div id="start-screen">
             <h1>📷 Snap & Snap Pro</h1>
             <p class="description">Abadikan momen dengan gaya retro-futuristik!</p>
@@ -27,35 +20,25 @@
             <p class="tip">Pastikan Anda mengizinkan akses kamera untuk memulai.</p>
         </div>
 
-        <!-- 2. UI PHOTOBOX UTAMA (Awalnya tersembunyi) -->
         <div id="photobox-ui" style="display: none;">
             <div class="photobooth-area">
                 <div class="photobooth">
-                    <!-- Stream kamera akan ditampilkan di sini -->
                     <video id="video" autoplay playsinline muted></video>
-                    <!-- Foto, template, dan efek digambar di sini -->
                     <canvas id="canvas"></canvas>
-                    <!-- Overlay untuk efek dekorasi statis (jika diperlukan untuk efek CSS seperti glitch, tapi saat ini tidak) -->
-                    <!-- <div id="effect-overlay" class="effect-overlay"></div> -->
                 </div>
             </div>
             
             <div class="controls">
                 
-                <!-- Tombol Utama -->
                 <button id="snap" class="main-btn snap-btn">AMBIL FOTO!</button>
 
-                <!-- Pilihan Template/Frame -->
                 <div class="options-group">
                     <h3>Pilih Template</h3>
                     <button class="template-btn active" data-template="none">None</button>
-                    <!-- <button class="template-btn" data-template="assets/polaroid.png">Polaroid (Single)</button>
-                    <button class="template-btn" data-template="assets/retro.png">Retro Film (Single)</button> -->
                     <button class="template-btn" data-template="multi-polaroid">Polaroid (4 Foto)</button>
                     <button class="template-btn" data-template="multi-retro">Retro (4 Foto)</button>
                 </div>
                 
-                <!-- Pilihan Efek Statis (Filter JS) -->
                 <div class="options-group">
                     <h3>Efek Statis</h3>
                     <button class="static-effect-btn active" data-effect="none">Normal</button>
@@ -64,9 +47,7 @@
                     <button class="static-effect-btn" data-effect="invert">Invert</button>
                 </div>
 
-                <!-- Kontrol Download & Reset -->
                 <div class="options-group action-group">
-                    <!-- Status khusus untuk mode multi-frame -->
                     <span id="multi-frame-status" style="display:none;"></span>
                     
                     <div class="download-area">
@@ -74,16 +55,11 @@
                         <button id="reset-btn" class="action-btn" style="display: none;">Mulai Ulang</button>
                     </div>
                 </div>
-
-                <!-- Hasil GIF tidak lagi ditampilkan -->
             </div>
             
         </div>
     </div>
     
-    <!-- Library untuk membuat GIF (DIHAPUS) -->
-    
-    <!-- Hubungkan ke file JavaScript utama -->
     <script type="module" src="js/app.js"></script>
 </body>
 </html>
