@@ -4,29 +4,28 @@
     --magenta-neon: #FF007F;
     --yellow-pixel: #FFE600;
     --green-neon: #39FF14;
-    --red-alert: #FF3333; /* Warna untuk error/peringatan */
+    --red-alert: #FF3333;
 
-    /* Font standar sistem, tanpa Google Fonts */
+    /* Font sistem standar */
     --font-primary: ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', monospace;
     --font-heading: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
     --font-alt: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
 
-    /* Warna tambahan untuk frame Polaroid Putih Minimalis */
-    --polaroid-white-main: #FFFFFF; /* Putih utama */
-    --polaroid-white-light: #F0F0F0; /* Putih lebih terang untuk highlight/area teks */
-    --polaroid-photo-border: #BBBBBB; /* Abu-abu terang untuk border foto */
-    --polaroid-text-color: #333333; /* Warna teks gelap */
+    /* Warna untuk frame Polaroid Putih Minimalis */
+    --polaroid-white-main: #FFFFFF;
+    --polaroid-white-light: #F0F0F0;
+    --polaroid-photo-border: #BBBBBB;
+    --polaroid-text-color: #333333;
 
-    /* Warna tambahan untuk frame Retro Minimalis */
-    --retro-dark-bg: #1A1A1A; /* Background gelap untuk strip film */
-    --retro-light-border: #888888; /* Border dan perforasi abu-abu terang */
+    /* Warna untuk frame Retro Minimalis */
+    --retro-dark-bg: #1A1A1A;
+    --retro-light-border: #888888;
 }
 
-/* === GAYA DASAR & FONT === */
-/* Pastikan HTML dan Body mengambil tinggi penuh dan latar belakang gelap */
+/* Gaya Dasar & Font */
 html, body {
     height: 100%;
-    background-color: var(--bg-dark); /* Pastikan background gelap */
+    background-color: var(--bg-dark);
 }
 
 * {
@@ -36,7 +35,7 @@ html, body {
 }
 
 body {
-    font-family: var(--font-primary); /* Default font lebih readable */
+    font-family: var(--font-primary);
     color: var(--cyan-neon);
     display: flex;
     justify-content: center;
@@ -44,27 +43,27 @@ body {
     min-height: 100vh;
     padding: 20px;
     transition: background-color 0.5s ease-in-out;
-    overflow-x: hidden; /* Mencegah scroll horizontal */
+    overflow-x: hidden;
 }
 
-/* --- Mode Default: Portrait / Mobile --- */
+/* Mode Default: Portrait / Mobile */
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
     width: 100%;
-    max-width: 650px; /* Batasi lebar container di mobile/portrait */
+    max-width: 650px;
     padding: 10px;
 }
 
 #start-screen {
     text-align: center;
     padding: 20px;
-    background-color: rgba(0, 0, 0, 0.7); /* Lebih gelap */
-    border-radius: 5px; /* Radius lebih kecil */
-    border: 2px solid var(--cyan-neon); /* Border simpel */
-    width: 100%; /* Agar memenuhi container */
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 5px;
+    border: 2px solid var(--cyan-neon);
+    width: 100%;
 }
 
 #start-screen h1 {
@@ -86,7 +85,7 @@ body {
     color: var(--green-neon);
 }
 
-/* === AREA PHOTOBOX UTAMA (PORTRAIT) === */
+/* Area Photobox Utama (Portrait) */
 #photobox-ui {
     display: none; /* Awalnya tersembunyi */
     flex-direction: column;
@@ -97,21 +96,21 @@ body {
 
 .photobooth-area {
     width: 100%;
-    max-width: 600px; /* Lebar maksimum untuk booth */
-    display: flex; /* Untuk memusatkan photobooth di dalamnya */
+    max-width: 600px;
+    display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .photobooth {
     position: relative;
-    width: 100%; /* Lebar penuh dari photobooth-area */
-    padding-bottom: 56.25%; /* Rasio 16:9 (9/16 * 100%) - default modern webcam */
-    height: 0; /* Penting untuk padding-bottom trick */
+    width: 100%;
+    padding-bottom: 56.25%; /* Rasio 16:9 */
+    height: 0;
     overflow: hidden;
-    border: 4px solid var(--cyan-neon); /* Border lebih simpel dan tidak terlalu tebal */
-    background-color: #000; /* Latar belakang untuk pillarbox/letterbox */
-    transition: border-color 0.3s ease-in-out; /* Transisi border saja */
+    border: 4px solid var(--cyan-neon);
+    background-color: #000;
+    transition: border-color 0.3s ease-in-out;
 }
 
 .photobooth video, .photobooth canvas {
@@ -120,22 +119,22 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Penting: agar video/canvas tidak terpotong dan mempertahankan aspek rasio */
-    image-rendering: pixelated; /* Memberikan efek retro pixel */
-    background-color: black; /* Warna latar belakang untuk area kosong jika object-fit: contain */
+    object-fit: contain; /* Agar video/canvas tidak terpotong */
+    image-rendering: pixelated; /* Efek piksel retro */
+    background-color: black;
 }
 
-/* === KONTROL & TOMBOL === */
+/* Kontrol & Tombol */
 .controls {
     display: flex;
     flex-direction: column;
     gap: 15px;
     width: 100%;
-    max-width: 600px; /* Batasi lebar kontrol */
+    max-width: 600px;
 }
 
 .options-group {
-    border: 2px solid var(--yellow-pixel); /* Border lebih tipis */
+    border: 2px solid var(--yellow-pixel);
     padding: 10px;
     display: flex;
     flex-wrap: wrap;
@@ -148,24 +147,23 @@ body {
     font-family: var(--font-heading);
     font-size: 0.7rem;
     color: var(--green-neon);
-    width: 100%; /* Pastikan judul mengambil lebar penuh */
+    width: 100%;
     text-align: center;
     margin-bottom: 5px;
 }
 
-
-/* --- Gaya Tombol Umum --- */
+/* Gaya Tombol Umum */
 button, .download-btn {
     font-family: var(--font-heading);
     background-color: var(--bg-dark);
     color: var(--cyan-neon);
-    border: 2px solid var(--cyan-neon); /* Border lebih kecil */
-    padding: 8px 12px; /* Padding lebih kecil */
+    border: 2px solid var(--cyan-neon);
+    padding: 8px 12px;
     cursor: pointer;
     text-transform: uppercase;
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out; /* Transisi yang lebih halus */
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
     text-decoration: none;
-    display: inline-flex; /* Menggunakan flexbox untuk alignment konten */
+    display: inline-flex;
     justify-content: center;
     align-items: center;
     font-size: 0.6rem; 
@@ -176,7 +174,7 @@ button, .download-btn {
 button:hover:not(:disabled), .download-btn:hover { 
     background-color: var(--cyan-neon);
     color: var(--bg-dark);
-    border-color: var(--cyan-neon); /* Pertahankan warna border */
+    border-color: var(--cyan-neon);
 }
 
 button:disabled { 
@@ -193,19 +191,12 @@ button.active {
     border-color: var(--magenta-neon);
 }
 
-button.active:hover {
-    /* (dihapus karena minimalis) */
-}
-
-/* --- Tombol Utama (Snap, Start) --- */
+/* Tombol Utama (Snap, Start) */
 .main-btn {
     width: 100%;
     padding: 15px;
     font-size: 1rem;
-    border-width: 3px; /* Border sedikit lebih tebal untuk main btn */
-}
-.main-btn:hover:not(:disabled) {
-    /* (dihapus karena minimalis) */
+    border-width: 3px;
 }
 
 #snap {
@@ -227,37 +218,36 @@ button.active:hover {
     padding: 10px;
 }
 
-/* Status untuk multi-frame */
 #multi-frame-status { 
     color: var(--yellow-pixel); 
     font-family: var(--font-alt);
     font-size: 0.6rem;
     text-align: center;
-    width: 100%; /* Agar mengambil lebar penuh */
+    width: 100%;
     margin-top: 5px;
 }
 
 .action-group {
-    flex-direction: row; /* Kembali ke baris */
+    flex-direction: row;
     flex-wrap: wrap;
-    justify-content: center; /* Pusatkan item */
-    gap: 10px; /* Spasi antar tombol */
+    justify-content: center;
+    gap: 10px;
 }
 .download-area {
     width: 100%;
     display: flex;
     gap: 10px;
     margin-top: 10px; 
-    justify-content: center; /* Pusatkan tombol */
+    justify-content: center;
 }
 .download-btn, #reset-btn {
     flex-grow: 1;
-    max-width: 48%; /* Agar bisa rata dua kolom */
+    max-width: 48%;
     text-align: center;
     font-size: 0.6rem;
 }
 
-/* --- Spinner (Loading) --- */
+/* Spinner (Loading) */
 .spinner {
     display: inline-block;
     width: 12px;
@@ -273,17 +263,17 @@ button.active:hover {
     to { transform: rotate(360deg); }
 }
 
-/* --- Efek Visual Lainnya (Opsional) --- */
+/* Efek Visual Lainnya */
 .feedback-flash {
     animation: flash-border 0.2s ease-out;
 }
 
 @keyframes flash-border {
-    0% { border-color: var(--yellow-pixel); } /* Hanya ubah warna border */
-    100% { border-color: var(--cyan-neon); } /* Kembali ke border asli */
+    0% { border-color: var(--yellow-pixel); }
+    100% { border-color: var(--cyan-neon); }
 }
 
-/* === MEDIA QUERY: LANDSCAPE / DESKTOP MODE === */
+/* Media Query: Landscape / Desktop Mode */
 @media (min-width: 850px) {
     
     body {
@@ -291,13 +281,13 @@ button.active:hover {
     }
     
     .container {
-        flex-direction: row; /* Ubah menjadi horizontal */
+        flex-direction: row;
         align-items: flex-start;
         max-width: 1200px;
         gap: 40px;
     }
     
-    /* PHOTOBOX UI */
+    /* UI PHOTOBOX */
     #photobox-ui {
         flex-direction: row;
         align-items: flex-start;
@@ -305,18 +295,18 @@ button.active:hover {
     }
 
     .photobooth-area {
-        width: 650px; /* Lebar absolut untuk area booth */
+        width: 650px;
     }
 
     .photobooth {
-        width: 650px; /* Lebar default untuk desktop */
-        padding-bottom: 365.625px; /* Ini akan menjadi 650 * 9/16, untuk rasio 16:9 */
+        width: 650px;
+        padding-bottom: 365.625px; /* Untuk rasio 16:9 pada lebar 650px */
     }
 
     /* KONTROL */
     .controls {
-        width: auto; /* Biarkan lebar menyesuaikan konten */
-        min-width: 300px; /* Lebar minimum untuk panel kontrol */
+        width: auto;
+        min-width: 300px;
         max-width: 350px;
     }
     
@@ -331,7 +321,7 @@ button.active:hover {
     }
 
     .options-group button {
-        width: 90%; /* Tombol lebih lebar di desktop */
+        width: 90%;
         font-size: 0.7rem;
         padding: 10px 15px;
     }
@@ -347,15 +337,15 @@ button.active:hover {
     }
     
     #multi-frame-status {
-        margin-top: 10px; /* Sesuaikan margin di desktop */
+        margin-top: 10px;
     }
 
     .download-area {
-        flex-direction: column; /* Kembali ke kolom untuk desktop agar tombol download & reset sejajar vertikal */
+        flex-direction: column;
         margin-top: 15px;
         gap: 10px;
     }
     .download-btn, #reset-btn {
-        max-width: 90%; /* Sesuaikan lebar */
+        max-width: 90%;
     }
 }
