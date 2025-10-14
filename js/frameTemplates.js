@@ -1,3 +1,5 @@
+/** frameTemplate.js*/
+
 /**
  * Mengambil nilai variabel CSS dari root.
  * @param {string} varName - Nama variabel CSS (misal: '--cyan-neon').
