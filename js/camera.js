@@ -1,4 +1,5 @@
 // js/camera.js
+// tuk open camera
 
 let videoElement;
 let canvasElement;
