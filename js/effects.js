@@ -45,6 +45,7 @@ export function applyJsFilter(imageData, effectType){
 
   const len = data.length;
   switch(effectType){
+    // B&W / Grayscale
     case 'grayscale': {
       for (let i=0;i<len;i+=4){
         const r = data[i], g = data[i+1], b = data[i+2];
@@ -53,7 +54,7 @@ export function applyJsFilter(imageData, effectType){
       }
       break;
     }
-
+    // Invert Colors
     case 'invert': {
       for (let i=0;i<len;i+=4){
         data[i] = 255 - data[i];
@@ -62,7 +63,7 @@ export function applyJsFilter(imageData, effectType){
       }
       break;
     }
-
+    // Thermal Neon Effect
     case 'thermal-neon': {
 
       const contrastFactor = 1.12; // >1 increases contrast slightly
