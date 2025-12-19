@@ -2,16 +2,18 @@
 <html lang="id">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1" />
   <title>Snap & Snap — Pro</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
+  <!-- Background Layers -->
   <div class="bg-aurora"></div>
   <div class="bg-grid"></div>
   <div class="scanlines"></div>
 
   <div class="container">
+    <!-- Header -->
     <header class="brand">
       <div class="brand-left">
         <div class="dot" aria-hidden="true"></div>
@@ -23,31 +25,96 @@
     </header>
 
     <main id="main">
-      <section id="start-screen" class="panel">
-        <h2>📷 Mulai Petualangan</h2>
-        <p class="description">Abadikan momen dengan vibe retro-futuristik.</p>
-        <button id="start-btn" class="main-btn">
-          Nyalakan Kamera <span class="spinner" style="display:none"></span>
-        </button>
-        <p class="tip">Izinkan akses kamera di browser.</p>
-      </section>
+      
+      <!-- ========================================= -->
+      <!-- BAGIAN 1: LANDING PAGE (Refined Layout)   -->
+      <!-- ========================================= -->
+   
+<section id="start-screen">
+  
+  <div class="hero-wrapper">
+    <!-- Judul & Subjudul -->
+    <div class="hero-content">
+      <h2 class="hero-title">CAPTURE THE<br>MOMENT</h2>
+      <p class="hero-subtitle">
+        Abadikan visual estetik dengan filter retro-digital.<br>
+        Pilih gaya, atur frame, dan jadilah ikonik.
+      </p>
+      
+      <button id="start-btn" class="init-btn">
+        <span>► INITIALIZE CAMERA</span>
+        <span class="spinner" style="display:none"></span>
+      </button>
+    </div>
 
+    <!-- 3 Kartu Langkah (Grid) -->
+    <div class="steps-container">
+      <div class="step-card">
+        <div class="step-icon">01</div>
+        <h3>SETUP</h3>
+        <p>Izinkan akses kamera, pilih filter visual & warna frame.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">02</div>
+        <h3>LAYOUT</h3>
+        <p>Tentukan mode: Single, 4-Grid, atau Film Strip.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">03</div>
+        <h3>SNAP</h3>
+        <p>Klik tombol, berpose 3 detik, dan unduh hasilnya.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Text -->
+  <div class="footer-info">
+    <p>WAITING FOR INPUT...</p>
+  </div>
+
+</section>
+
+      <!-- ========================================= -->
+      <!-- BAGIAN 2: CAMERA UI (Photobox Layout)     -->
+      <!-- ========================================= -->
       <section id="photobox-ui" class="layout panel" style="display:none">
+        
+        <!-- Area Kiri: Kamera -->
         <div class="photobooth-area">
           <div class="photobooth">
             <video id="video" autoplay playsinline muted></video>
             <canvas id="canvas"></canvas>
+            <div id="countdown-hud" class="countdown-hud">
+              <div id="count-num" class="count-num">3</div>
+            </div>
           </div>
         </div>
 
+        <!-- Area Kanan: Kontrol -->
         <div class="controls">
+          <!-- Tombol Back Baru -->
+          <button id="back-btn" class="back-btn">
+            &lt; KEMBALI KE MENU
+          </button>
+
           <button id="snap" class="main-btn">AMBIL FOTO!</button>
 
           <div class="options-group">
             <h3>Pilih Template</h3>
-            <button class="template-btn active" data-template="none">1 FRAME</button>
-            <button class="template-btn" data-template="multi-grid">4 FRAME</button>
-            <!-- <button class="template-btn" data-template="multi-retro">RETRO (4 FOTO)</button> -->
+            <button class="template-btn active" data-template="none">SINGLE</button>
+            <button class="template-btn" data-template="multi-grid">4 GRID</button>
+            <button class="template-btn" data-template="multi-film-6">6 FILM</button>
+          </div>
+
+          <div class="options-group">
+            <h3>Warna Frame</h3>
+            <div class="color-picker">
+              <button class="color-btn active" data-color="#ffffff" style="background:#ffffff;"></button>
+              <button class="color-btn" data-color="#121216" style="background:#121216; border-color:#555"></button>
+              <button class="color-btn" data-color="#ff3ea5" style="background:#ff3ea5;"></button>
+              <button class="color-btn" data-color="#00e5ff" style="background:#00e5ff;"></button>
+              <button class="color-btn" data-color="#ffe600" style="background:#ffe600;"></button>
+            </div>
           </div>
 
           <div class="options-group">
@@ -55,14 +122,14 @@
             <button class="static-effect-btn active" data-effect="none">Normal</button>
             <button class="static-effect-btn" data-effect="grayscale">B&amp;W</button>
             <button class="static-effect-btn" data-effect="invert">Invert</button>
-            <button class="static-effect-btn" data-effect="thermal-neon">Thermal Neon</button>
+            <button class="static-effect-btn" data-effect="thermal-neon">Neon</button>
           </div>
 
           <div class="options-group action-group">
             <span id="multi-frame-status" style="display:none"></span>
             <div class="download-area">
-              <button id="download-link" class="download-btn" style="display:none">Download Foto</button>
-              <button id="reset-btn" style="display:none">Mulai Ulang</button>
+              <button id="download-link" class="download-btn" style="display:none">Download</button>
+              <button id="reset-btn" style="display:none">Reset</button>
             </div>
           </div>
         </div>
@@ -70,8 +137,7 @@
     </main>
   </div>
 
-  <footer class="watermark">© 2025 — KUY FOTO</footer>
-
+  <footer class="watermark">© 2025 — SNAP & SNAP PRO</footer>
   <script type="module" src="js/app.js"></script>
 </body>
 </html>
