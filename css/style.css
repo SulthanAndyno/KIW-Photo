@@ -27,6 +27,7 @@ body {
   color: var(--text);
   background: var(--bg-dark);
   overflow-x: hidden;
+  margin: 0;
 }
 
 /* Background layers */
@@ -72,7 +73,7 @@ body {
   border-radius: var(--radius); box-shadow: var(--shadow);
 }
 .brand-left { display: flex; align-items: center; gap: 10px; }
-.brand h1 { font-family: var(--font-heading); letter-spacing: .5px; font-weight: 700; font-size: 1.1rem; color: #e6f6ff; }
+.brand h1 { font-family: var(--font-heading); letter-spacing: .5px; font-weight: 700; font-size: 1.1rem; color: #e6f6ff; margin: 0; }
 .brand h1 span { color: var(--cyan-neon); }
 .brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green-neon); box-shadow: 0 0 8px var(--green-neon); }
 .eq { display: flex; gap: 4px; }
@@ -97,13 +98,235 @@ body {
 }
 
 /* Start screen */
-#start-screen { padding: 28px; }
-#start-screen h2 {
-  font-family: var(--font-heading);
-  margin-bottom: 8px; color: #fff; letter-spacing: .4px;
+/* --- LANDING PAGE / START SCREEN FIXED --- */
+#start-screen {
+  width: 100%;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Memastikan semua elemen di tengah secara horizontal */
+  justify-content: center;
+  text-align: center; /* Memastikan teks di dalam elemen rata tengah */
+  min-height: 70vh;
 }
-.description { color:#cfe7ff; opacity:.85; margin-bottom:18px; font-size:.95rem; }
-.tip { color: var(--green-neon); opacity:.9; font-size:.78rem; }
+
+.hero-wrapper {
+  width: 100%;
+  max-width: 900px; /* Membatasi lebar agar tidak terlalu melebar di layar besar */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+/* Hero Content */
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.hero-title {
+  font-family: var(--font-heading);
+  font-size: 3.5rem; /* Lebih besar agar gagah */
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 0;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #ffffff 0%, #cfe7ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 20px rgba(0, 229, 255, 0.3));
+}
+
+.hero-subtitle {
+  font-size: 1rem;
+  color: var(--text);
+  opacity: 0.8;
+  line-height: 1.6;
+  max-width: 500px;
+  margin: 0;
+}
+
+/* Tombol Start */
+.init-btn {
+  font-family: var(--font-primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 0 40px;
+  height: 54px;
+  background: rgba(0, 229, 255, 0.08);
+  border: 1px solid var(--cyan-neon);
+  border-radius: 4px; /* Sedikit kotak agar kesan retro */
+  color: var(--cyan-neon);
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.1);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.init-btn:hover {
+  background: var(--cyan-neon);
+  color: #000;
+  box-shadow: 0 0 30px rgba(0, 229, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Steps Cards Grid - PERBAIKAN UTAMA DISINI */
+.steps-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Memaksa 3 kolom */
+  gap: 20px;
+  width: 100%;
+  margin-top: 40px;
+}
+
+/* Kartu Step */
+.step-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 24px 20px;
+  border-radius: 12px;
+  text-align: center; /* Teks dalam kartu rata tengah */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: border-color 0.3s ease;
+}
+
+.step-card:hover {
+  border-color: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.05);
+}
+
+.step-icon {
+  font-family: var(--font-primary);
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--magenta-neon);
+  margin-bottom: 15px;
+  opacity: 0.9;
+  text-shadow: 0 0 10px rgba(255, 62, 165, 0.4);
+}
+
+.step-card h3 {
+  font-family: var(--font-heading);
+  color: #fff;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+}
+
+.step-card p {
+  font-size: 0.85rem;
+  color: #b0c4de;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Footer Info */
+.footer-info {
+  margin-top: 50px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  width: 100%;
+  text-align: center;
+}
+
+.footer-info p {
+  font-family: var(--font-primary);
+  font-size: 0.75rem;
+  color: var(--green-neon);
+  opacity: 0.7;
+  letter-spacing: 1.5px;
+  margin: 0;
+  animation: blinkText 2s infinite;
+}
+
+@keyframes blinkText {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 0.3; }
+}
+
+/* Responsif Mobile (Agar di HP tetap rapi) */
+@media (max-width: 768px) {
+  .hero-title { font-size: 2.2rem; }
+  .steps-container {
+    grid-template-columns: 1fr; /* Jadi 1 kolom di HP */
+    max-width: 400px;
+  }
+}
+
+.step-card:hover {
+  border-color: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.05);
+}
+
+.step-icon {
+  font-family: var(--font-primary);
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--magenta-neon);
+  margin-bottom: 15px;
+  opacity: 0.9;
+  text-shadow: 0 0 10px rgba(255, 62, 165, 0.4);
+}
+
+.step-card h3 {
+  font-family: var(--font-heading);
+  color: #fff;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+}
+
+.step-card p {
+  font-size: 0.85rem;
+  color: #b0c4de;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Footer Info */
+.footer-info {
+  margin-top: 50px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  width: 100%;
+  text-align: center;
+}
+
+.footer-info p {
+  font-family: var(--font-primary);
+  font-size: 0.75rem;
+  color: var(--green-neon);
+  opacity: 0.7;
+  letter-spacing: 1.5px;
+  margin: 0;
+  animation: blinkText 2s infinite;
+}
+
+@keyframes blinkText {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 0.3; }
+}
+
+/* Responsif Mobile (Agar di HP tetap rapi) */
+@media (max-width: 768px) {
+  .hero-title { font-size: 2.2rem; }
+  .steps-container {
+    grid-template-columns: 1fr; /* Jadi 1 kolom di HP */
+    max-width: 400px;
+  }
+}
 
 /* App layout */
 .layout { display: grid; gap: 22px; }
@@ -135,10 +358,10 @@ body {
 .options-group h3 {
   font-family: var(--font-heading); font-size:.85rem;
   color:#e9f7ff; width:100%; text-align:center;
-  margin-bottom:4px; letter-spacing:.4px;
+  margin-bottom:4px; letter-spacing:.4px; margin-top: 0;
 }
 
-/* === BUTTONS FINAL FIX === */
+/* === BUTTONS === */
 button {
   font-family: var(--font-heading);
   background: rgba(8,12,20,.6);
@@ -160,8 +383,16 @@ button {
   padding: 0 20px;
   box-sizing: border-box;
 }
+/* Style tambahan untuk tombol opsi kecil */
+.template-btn, .static-effect-btn {
+  height: 36px; padding: 0 14px; font-size: .7rem; min-width: 80px;
+}
+.template-btn.active, .static-effect-btn.active {
+  background: var(--magenta-neon); border-color: var(--magenta-neon);
+  box-shadow: 0 0 12px rgba(255,62,165,.4);
+}
 
-/* tombol download diset ulang total */
+/* Tombol Download */
 .download-btn {
   all: unset;
   display: inline-flex;
@@ -186,8 +417,6 @@ button {
   box-sizing: border-box;
   text-decoration: none;
 }
-
-/* efek neon */
 button::before,
 .download-btn::before {
   content: "";
@@ -201,32 +430,24 @@ button::before,
   mask-composite: exclude;
   opacity: .35;
 }
-
-/* hover efek */
 button:hover:not(:disabled),
 .download-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 22px rgba(0,229,255,.25);
 }
-
 .download-btn:hover {
   background: rgba(0,229,255,.18);
   border-color: var(--cyan-neon);
   color: #00171d;
 }
-
 #reset-btn:hover {
   background: rgba(255,62,165,.18);
   border-color: var(--magenta-neon);
   color: #1b0012;
 }
+button:disabled { opacity: .6; cursor: not-allowed; }
 
-button:disabled {
-  opacity: .6;
-  cursor: not-allowed;
-}
-
-/* utama */
+/* Utama */
 .main-btn {
   width: 100%;
   padding: 16px;
@@ -289,3 +510,36 @@ button:disabled {
   0%,100% { transform: scale(1); opacity: 1; }
   50% { transform: scale(1.2); opacity: 0.7; }
 }
+
+/* --- TAMBAHAN KHUSUS (Agar fitur baru tetap rapi) --- */
+
+/* Color Picker */
+.color-picker { display: flex; gap: 8px; }
+.color-btn {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.2); cursor: pointer; padding: 0;
+}
+.color-btn.active { border-color: #fff; transform: scale(1.15); box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+
+/* Start Screen Extras (How To & Creators) */
+.extra-info {
+  margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 20px; display: grid; gap: 20px;
+}
+@media (min-width: 768px) { .extra-info { grid-template-columns: 1fr 1fr; } }
+
+.info-box h3 {
+  font-family: var(--font-heading); color: var(--cyan-neon);
+  font-size: 0.9rem; margin-bottom: 12px; letter-spacing: 1px;
+}
+.steps-list { font-size: 0.85rem; line-height: 1.6; color: rgba(207, 231, 255, 0.8); }
+.steps-list span { color: var(--yellow-pixel); font-weight: bold; margin-right: 5px; }
+
+.creators-grid { display: flex; gap: 15px; }
+.creator-item { text-align: center; }
+.creator-item img {
+  width: 50px; height: 50px; border-radius: 50%; object-fit: cover;
+  border: 2px solid var(--magenta-neon); margin-bottom: 5px;
+}
+.creator-item span { display: block; font-size: 0.75rem; color: #fff; }
+
