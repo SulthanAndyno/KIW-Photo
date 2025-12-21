@@ -152,23 +152,17 @@ body {
 
 /* Tombol Start */
 .init-btn {
-  font-family: var(--font-primary);
-  font-size: 0.9rem;
+ height: 48px;               
+  padding: 16px 32px;          
+  font-size: 1rem;             
+  font-family: var(--font-heading);
   font-weight: 700;
-  padding: 0 40px;
-  height: 54px;
-  background: rgba(0, 229, 255, 0.08);
-  border: 1px solid var(--cyan-neon);
-  border-radius: 4px; /* Sedikit kotak agar kesan retro */
-  color: var(--cyan-neon);
-  box-shadow: 0 0 15px rgba(0, 229, 255, 0.1);
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  transition: all 0.3s ease;
-  cursor: pointer;
+  letter-spacing: .5px;
+  border-radius: 12px;        
+  border-width: 2px;          
   text-transform: uppercase;
-  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
 }
 
 .init-btn:hover {
@@ -354,11 +348,15 @@ body {
   padding:14px; border-radius:12px;
   display:flex; flex-wrap:wrap; gap:10px; justify-content:center;
   background:linear-gradient(180deg, rgba(255,255,255,.03), transparent);
-
-   display: grid;
+  display: grid;
   grid-template-columns: 1fr 1fr; /* Membagi jadi 2 kolom sama besar */
   gap: 8px; /* Jarak antar tombol */
   align-items: center;
+}
+.options-group .template-btn:last-child {
+  grid-column: 1 / -1;      /* ambil 2 kolom */
+  justify-self: center;     /* center horizontal */
+  min-width: 160px;         /* biar proporsional */
 }
 .options-group h3 {
   font-family: var(--font-heading); font-size:.85rem;
@@ -469,6 +467,16 @@ button:disabled { opacity: .6; cursor: not-allowed; }
   font-size: 1rem;
   border-width: 2px;
 }
+#back-btn {
+  width: 100%;
+  height: 48px;              /* sama dengan main button */
+  padding: 16px;             /* sama */
+  font-size: 1rem;           /* sama */
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
 #snap {
   background: linear-gradient(180deg, rgba(255,62,165,.16), rgba(255,62,165,.08));
   border-color: var(--magenta-neon);
@@ -574,4 +582,3 @@ button:disabled { opacity: .6; cursor: not-allowed; }
   border: 2px solid var(--magenta-neon); margin-bottom: 5px;
 }
 .creator-item span { display: block; font-size: 0.75rem; color: #fff; }
-
