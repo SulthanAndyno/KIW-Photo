@@ -529,7 +529,13 @@ button:disabled { opacity: .6; cursor: not-allowed; }
 /* --- TAMBAHAN KHUSUS (Agar fitur baru tetap rapi) --- */
 
 /* Color Picker */
-.color-picker { display: flex; gap: 8px; }
+.color-picker { 
+  grid-column: 1 / -1;   /* 🔥 ambil satu baris penuh */
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
 .color-btn {
   width: 28px; height: 28px; border-radius: 50%;
   border: 2px solid rgba(255,255,255,0.2); cursor: pointer; padding: 0;
