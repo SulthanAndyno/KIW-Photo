@@ -351,14 +351,29 @@ body {
 .controls { padding:16px; display:flex; flex-direction:column; gap:14px; }
 .options-group {
   border:1px dashed rgba(255,255,255,.15);
-  padding:12px; border-radius:12px;
+  padding:14px; border-radius:12px;
   display:flex; flex-wrap:wrap; gap:10px; justify-content:center;
   background:linear-gradient(180deg, rgba(255,255,255,.03), transparent);
+
+   display: grid;
+  grid-template-columns: 1fr 1fr; /* Membagi jadi 2 kolom sama besar */
+  gap: 8px; /* Jarak antar tombol */
+  align-items: center;
 }
 .options-group h3 {
   font-family: var(--font-heading); font-size:.85rem;
   color:#e9f7ff; width:100%; text-align:center;
   margin-bottom:4px; letter-spacing:.4px; margin-top: 0;
+  grid-column: 1 / -1; /* Judul memenuhi lebar penuh (atas) */
+  font-family: var(--font-heading); 
+  font-size: 0.75rem;
+  font-weight: 700; /* Tebal sama kayak tombol */
+  text-transform: uppercase; /* Huruf besar semua */
+  letter-spacing: 1px;
+  color: #e9f7ff; 
+  text-align: center;
+  margin: 0 0 8px 0; /* Jarak ke tombol */
+  opacity: 0.9;
 }
 
 /* === BUTTONS === */
