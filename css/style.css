@@ -407,7 +407,7 @@ button {
   box-shadow: 0 0 12px rgba(255,62,165,.4);
 }
 
-/* Tombol Download */
+Tombol Download
 .download-btn {
   all: unset;
   display: inline-flex;
@@ -488,9 +488,20 @@ button:disabled { opacity: .6; cursor: not-allowed; }
 @keyframes spin { to { transform:rotate(360deg); } }
 
 /* Action area */
-.action-group { flex-direction: column; gap: 10px; }
-.download-area { display: flex; gap: 10px; justify-content: center; }
-.download-btn, #reset-btn { flex: 1; }
+.action-group { 
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.download-area { 
+   grid-column: 1 / -1;
+  display: flex; 
+  justify-content: center; 
+  gap: 14px; 
+}
+.download-btn, #reset-btn { 
+  flex: unset;          /* 🔥 penting */
+  min-width: 140px;
+}
 
 /* Status text */
 #multi-frame-status {
