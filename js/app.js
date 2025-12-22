@@ -1,229 +1,257 @@
+/* ======================================================
+   IMPORT MODULE
+====================================================== */
 import * as Camera from './camera.js';
 import { applyJsFilter } from './effects.js';
-import { drawMultiGrid, drawFilmRoll6, drawSingle } from './frameTemplates.js';
-import { initTimer, countdown, cancelCountdown, isCounting } from './timer.js';
+import {
+  drawSingle,
+  drawMultiGrid,
+  drawFilmRoll6
+} from './frameTemplates.js';
 
-// ====== DOM ======
-const startScreen = document.getElementById('start-screen');
-const startBtn = document.getElementById('start-btn');
-const startBtnSpinner = startBtn?.querySelector('.spinner');
-const photoboxUI = document.getElementById('photobox-ui');
-const backBtn = document.getElementById('back-btn'); // REFERENSI TOMBOL BACK
+/* ======================================================
+   DOM ELEMENTS
+====================================================== */
+const startScreen   = document.getElementById('start-screen');
+const startBtn      = document.getElementById('start-btn');
+const photoboxUI    = document.getElementById('photobox-ui');
+const backBtn       = document.getElementById('back-btn');
 
-const video = document.getElementById('video');
+const video  = document.getElementById('video');
 const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
+const ctx    = canvas.getContext('2d');
 
-const snapBtn = document.getElementById('snap');
+const snapBtn     = document.getElementById('snap');
 const downloadBtn = document.getElementById('download-link');
-const resetBtn = document.getElementById('reset-btn');
+const resetBtn    = document.getElementById('reset-btn');
 
-const templateBtns = Array.from(document.querySelectorAll('button[data-template]'));
-const effectBtns = Array.from(document.querySelectorAll('button[data-effect]'));
-const colorDots = Array.from(document.querySelectorAll('.color-btn')); // Fix class selector
-const multiFrameStatus = document.getElementById('multi-frame-status');
+const templateBtns = [...document.querySelectorAll('[data-template]')];
+const effectBtns   = [...document.querySelectorAll('[data-effect]')];
+const colorBtns    = [...document.querySelectorAll('.color-btn')];
+const statusText   = document.getElementById('multi-frame-status');
 
-// ====== STATE ======
+/* ======================================================
+   STATE
+====================================================== */
 let currentTemplate = 'none';
-let currentStaticEffect = 'none';
-let currentFrameColor = '#ffffff'; 
+let currentEffect   = 'none';
+let currentColor    = '#ffffff';
 
-let capturedImageData = null;
-let isPhotoTaken = false;
+let isCaptured = false;
+let maxFrames  = 1;
+let frames     = [];
+let frameIndex = 0;
+let singleShot = null;
 
-let maxMultiFrames = 1;
-let capturedFrames = [];
-let currentIndex = 0;
-
-// ====== INIT ======
+/* ======================================================
+   INIT
+====================================================== */
 Camera.initCamera(video, canvas, ctx);
-initTimer();
 
-// ====== CORE LOOPS ======
-async function appStartCamera() {
-  if (startBtnSpinner) startBtnSpinner.style.display = 'inline-block';
-  startBtn.disabled = true;
+/* ======================================================
+   CAMERA FLOW
+====================================================== */
+async function startCamera() {
   try {
     await Camera.startCameraStream();
-
     startScreen.style.display = 'none';
-    photoboxUI.style.display = 'grid'; 
-    appRenderLoop();
+    photoboxUI.style.display = 'grid';
+    renderLoop();
   } catch (err) {
+    alert('Gagal mengakses kamera');
     console.error(err);
-    alert("Error: " + err.message);
-  } finally {
-    startBtn.disabled = false;
-    if (startBtnSpinner) startBtnSpinner.style.display = 'none';
   }
 }
 
-// FUNGSI BARU: Kembali ke Landing Page
-function appBackToMenu() {
-  // 1. Matikan stream kamera
+function backToMenu() {
   Camera.stopCameraStream();
-  
-  // 2. Reset semua state UI (sama seperti tombol Reset)
-  appReset();
+  resetApp();
 
-  // 3. Pindah tampilan
   photoboxUI.style.display = 'none';
-  startScreen.style.display = 'flex'; // Flex agar centering CSS bekerja
+  startScreen.style.display = 'flex';
 }
 
-function appRenderLoop() {
-  if (!Camera.isStreamActive() || isPhotoTaken) return;
+/* ======================================================
+   RENDER LOOP
+====================================================== */
+function renderLoop() {
+  if (!Camera.isStreamActive() || isCaptured) return;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
-  const liveFrame = Camera.drawLiveFrame((imageData) => {
-    applyJsFilter(imageData, currentStaticEffect);
-  });
+
+  const liveFrame = Camera.drawLiveFrame(img =>
+    applyJsFilter(img, currentEffect)
+  );
 
   if (!liveFrame) {
-    requestAnimationFrame(appRenderLoop);
+    requestAnimationFrame(renderLoop);
     return;
   }
 
   if (currentTemplate === 'multi-grid') {
-    drawMultiGrid(ctx, canvas.width, canvas.height, capturedFrames, currentIndex, liveFrame, currentFrameColor);
-  } else if (currentTemplate === 'multi-film-6') {
-    drawFilmRoll6(ctx, canvas.width, canvas.height, capturedFrames, currentIndex, liveFrame, currentFrameColor);
-  } else {
-    // Single mode: Optional border overlay logic if needed
+    drawMultiGrid(
+      ctx, canvas.width, canvas.height,
+      frames, frameIndex, liveFrame, currentColor
+    );
+  }
+  else if (currentTemplate === 'multi-film-6') {
+    drawFilmRoll6(
+      ctx, canvas.width, canvas.height,
+      frames, frameIndex, liveFrame, currentColor
+    );
   }
 
-  requestAnimationFrame(appRenderLoop);
+  requestAnimationFrame(renderLoop);
 }
 
-// ====== ACTIONS ======
-async function handleTakePhoto() {
-  if (!Camera.isStreamActive() || isCounting()) return;
-
-  const done = await countdown(3); 
-  if (!done) return;
+/* ======================================================
+   CAPTURE PHOTO
+====================================================== */
+function takePhoto() {
+  if (!Camera.isStreamActive()) return;
 
   const raw = Camera.getCurrentVideoFrame();
-  if(!raw) return;
+  if (!raw) return;
 
-  let processed = new ImageData(new Uint8ClampedArray(raw.data), raw.width, raw.height);
-  applyJsFilter(processed, currentStaticEffect);
+  const processed = new ImageData(
+    new Uint8ClampedArray(raw.data),
+    raw.width,
+    raw.height
+  );
 
-  if (currentTemplate !== 'none') {
-    capturedFrames[currentIndex] = processed;
-    currentIndex++;
+  applyJsFilter(processed, currentEffect);
 
-    if (currentIndex >= maxMultiFrames) {
-        finishSession();
-    } else {
-        multiFrameStatus.textContent = `SHOT ${currentIndex + 1} / ${maxMultiFrames}`;
-        multiFrameStatus.style.display = 'inline-block';
-    }
-  } 
-  else {
-    capturedImageData = processed;
-    drawSingle(ctx, canvas.width, canvas.height, capturedImageData, currentFrameColor);
+  if (currentTemplate === 'none') {
+    singleShot = processed;
+    drawSingle(ctx, canvas.width, canvas.height, singleShot, currentColor);
     finishSession();
+    return;
+  }
+
+  frames[frameIndex] = processed;
+  frameIndex++;
+
+  if (frameIndex >= maxFrames) {
+    finishSession();
+  } else {
+    statusText.textContent = `SHOT ${frameIndex + 1} / ${maxFrames}`;
+    statusText.style.display = 'inline-block';
   }
 }
 
+/* ======================================================
+   SESSION END
+====================================================== */
 function finishSession() {
-  isPhotoTaken = true;
-  snapBtn.style.display = 'none';
+  isCaptured = true;
+
+  snapBtn.style.display     = 'none';
   downloadBtn.style.display = 'inline-block';
-  resetBtn.style.display = 'inline-block';
-  
-  multiFrameStatus.textContent = "SESSION COMPLETE";
-  
-  const W = canvas.width, H = canvas.height;
+  resetBtn.style.display    = 'inline-block';
+
+  statusText.textContent = 'SESSION COMPLETE';
+
+  const W = canvas.width;
+  const H = canvas.height;
+
   if (currentTemplate === 'multi-grid') {
-    drawMultiGrid(ctx, W, H, capturedFrames, -1, null, currentFrameColor);
-  } else if (currentTemplate === 'multi-film-6') {
-    drawFilmRoll6(ctx, W, H, capturedFrames, -1, null, currentFrameColor);
+    drawMultiGrid(ctx, W, H, frames, -1, null, currentColor);
   }
-  
-  updateDownloadLink();
+  else if (currentTemplate === 'multi-film-6') {
+    drawFilmRoll6(ctx, W, H, frames, -1, null, currentColor);
+  }
+
+  updateDownload();
 }
 
-function updateDownloadLink() {
-  const url = canvas.toDataURL('image/png', 1.0);
-  const linkBtn = document.getElementById('download-link');
-  linkBtn.onclick = () => {
+function updateDownload() {
+  const imageURL = canvas.toDataURL('image/png');
+
+  downloadBtn.onclick = () => {
     const a = document.createElement('a');
-    a.href = url;
+    a.href = imageURL;
     a.download = `SNAP_${Date.now()}.png`;
     a.click();
   };
 }
 
-function appReset() {
-  cancelCountdown();
-  isPhotoTaken = false;
-  capturedImageData = null;
-  capturedFrames = [];
-  currentIndex = 0;
-  
-  snapBtn.style.display = 'block';
+/* ======================================================
+   RESET
+====================================================== */
+function resetApp() {
+  isCaptured = false;
+  frames = [];
+  frameIndex = 0;
+  singleShot = null;
+
+  snapBtn.style.display     = 'block';
   downloadBtn.style.display = 'none';
-  resetBtn.style.display = 'none';
-  multiFrameStatus.style.display = 'none';
-  
-  if (Camera.isStreamActive()) requestAnimationFrame(appRenderLoop);
+  resetBtn.style.display    = 'none';
+  statusText.style.display  = 'none';
+
+  if (Camera.isStreamActive()) {
+    requestAnimationFrame(renderLoop);
+  }
 }
 
-// ====== EVENT LISTENERS ======
-startBtn.addEventListener('click', appStartCamera);
-resetBtn.addEventListener('click', appReset);
-snapBtn.addEventListener('click', handleTakePhoto);
+/* ======================================================
+   EVENT LISTENERS
+====================================================== */
+startBtn.addEventListener('click', startCamera);
+snapBtn.addEventListener('click', takePhoto);
+resetBtn.addEventListener('click', resetApp);
+backBtn?.addEventListener('click', backToMenu);
 
-// Event Listener untuk Tombol Back
-if(backBtn) {
-  backBtn.addEventListener('click', appBackToMenu);
-}
-
-// Template Handling
+/* TEMPLATE */
 templateBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     templateBtns.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    
+
     currentTemplate = btn.dataset.template;
-    
-    if (currentTemplate === 'multi-film-6') maxMultiFrames = 6;
-    else if (currentTemplate === 'multi-grid') maxMultiFrames = 4;
-    else maxMultiFrames = 1;
-    
-    appReset();
-    
-    if(maxMultiFrames > 1) {
-        multiFrameStatus.style.display = 'inline-block';
-        multiFrameStatus.textContent = `SHOT 1 / ${maxMultiFrames}`;
+
+    if (currentTemplate === 'multi-grid') maxFrames = 4;
+    else if (currentTemplate === 'multi-film-6') maxFrames = 6;
+    else maxFrames = 1;
+
+    resetApp();
+
+    if (maxFrames > 1) {
+      statusText.style.display = 'inline-block';
+      statusText.textContent = `SHOT 1 / ${maxFrames}`;
     }
   });
 });
 
-// Color Handling
-colorDots.forEach(btn => {
-  btn.addEventListener('click', () => {
-    colorDots.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentFrameColor = btn.dataset.color;
-    
-    if(isPhotoTaken) {
-        if(currentTemplate === 'none') drawSingle(ctx, canvas.width, canvas.height, capturedImageData, currentFrameColor);
-        else if(currentTemplate === 'multi-grid') drawMultiGrid(ctx, canvas.width, canvas.height, capturedFrames, -1, null, currentFrameColor);
-        else if(currentTemplate === 'multi-film-6') drawFilmRoll6(ctx, canvas.width, canvas.height, capturedFrames, -1, null, currentFrameColor);
-        
-        updateDownloadLink();
-    }
-  });
-});
-
-// Effect Handling
+/* FILTER */
 effectBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     effectBtns.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    currentStaticEffect = btn.dataset.effect;
+    currentEffect = btn.dataset.effect;
+  });
+});
+
+/* COLOR */
+colorBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    colorBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    currentColor = btn.dataset.color;
+
+    if (isCaptured) {
+      if (currentTemplate === 'none') {
+        drawSingle(ctx, canvas.width, canvas.height, singleShot, currentColor);
+      }
+      else if (currentTemplate === 'multi-grid') {
+        drawMultiGrid(ctx, canvas.width, canvas.height, frames, -1, null, currentColor);
+      }
+      else if (currentTemplate === 'multi-film-6') {
+        drawFilmRoll6(ctx, canvas.width, canvas.height, frames, -1, null, currentColor);
+      }
+
+      updateDownload();
+    }
   });
 });
