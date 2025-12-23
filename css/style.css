@@ -77,7 +77,7 @@ body{
   box-shadow:var(--shadow);
 }
 
-/* BRAND */
+/* statis animasi */
 .brand{
   display:flex;
   align-items:center;
