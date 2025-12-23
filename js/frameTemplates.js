@@ -53,7 +53,7 @@ export function drawSingle(ctx, W, H, imgData, color) {
   if(!imgData) return;
 
   // 2. Setting Geometri Frame
-  // Margin 8% biar bingkainya kelihatan tebal dan mewah
+  // Margin 8% biar bingkainya kelihatan tebal
   const margin = W * 0.08; 
   const ix = margin;
   const iy = margin;
