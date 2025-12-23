@@ -1,17 +1,15 @@
-/* ======================================================
-   IMPORT MODULE
-====================================================== */
+// import camera
 import * as Camera from './camera.js';
+// import effect
 import { applyJsFilter } from './effects.js';
+// import frame
 import {
   drawSingle,
   drawMultiGrid,
   drawFilmRoll6
-} from './frameTemplates.js';
+} from './frameTemplates.js'; 
 
-/* ======================================================
-   DOM ELEMENTS
-====================================================== */
+// document object model
 const startScreen   = document.getElementById('start-screen');
 const startBtn      = document.getElementById('start-btn');
 const photoboxUI    = document.getElementById('photobox-ui');
@@ -30,9 +28,7 @@ const effectBtns   = [...document.querySelectorAll('[data-effect]')];
 const colorBtns    = [...document.querySelectorAll('.color-btn')];
 const statusText   = document.getElementById('multi-frame-status');
 
-/* ======================================================
-   STATE
-====================================================== */
+//kondisi awal
 let currentTemplate = 'none';
 let currentEffect   = 'none';
 let currentColor    = '#ffffff';
@@ -43,22 +39,18 @@ let frames     = [];
 let frameIndex = 0;
 let singleShot = null;
 
-/* ======================================================
-   INIT
-====================================================== */
+// menyiapkan kamera
 Camera.initCamera(video, canvas, ctx);
 
-/* ======================================================
-   CAMERA FLOW
-====================================================== */
+// memulai camera
 async function startCamera() {
   try {
     await Camera.startCameraStream();
     startScreen.style.display = 'none';
     photoboxUI.style.display = 'grid';
     renderLoop();
-  } catch (err) {
-    alert('Gagal mengakses kamera');
+  } catch (err) { 
+    alert('Gagal mengakses kamera'); //jika tidak diizinkan
     console.error(err);
   }
 }
@@ -71,9 +63,7 @@ function backToMenu() {
   startScreen.style.display = 'flex';
 }
 
-/* ======================================================
-   RENDER LOOP
-====================================================== */
+// frame berjalan
 function renderLoop() {
   if (!Camera.isStreamActive() || isCaptured) return;
 
@@ -104,9 +94,7 @@ function renderLoop() {
   requestAnimationFrame(renderLoop);
 }
 
-/* ======================================================
-   CAPTURE PHOTO
-====================================================== */
+// mengambil foto
 function takePhoto() {
   if (!Camera.isStreamActive()) return;
 
@@ -139,9 +127,7 @@ function takePhoto() {
   }
 }
 
-/* ======================================================
-   SESSION END
-====================================================== */
+// selesai mengambil foto
 function finishSession() {
   isCaptured = true;
 
@@ -163,7 +149,7 @@ function finishSession() {
 
   updateDownload();
 }
-
+// download foto png
 function updateDownload() {
   const imageURL = canvas.toDataURL('image/png');
 
@@ -175,9 +161,7 @@ function updateDownload() {
   };
 }
 
-/* ======================================================
-   RESET
-====================================================== */
+// reset web
 function resetApp() {
   isCaptured = false;
   frames = [];
@@ -194,28 +178,29 @@ function resetApp() {
   }
 }
 
-/* ======================================================
-   EVENT LISTENERS
-====================================================== */
+// interaksi pengguna
 startBtn.addEventListener('click', startCamera);
 snapBtn.addEventListener('click', takePhoto);
 resetBtn.addEventListener('click', resetApp);
 backBtn?.addEventListener('click', backToMenu);
 
-/* TEMPLATE */
+// Pilih Layout Foto
 templateBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     templateBtns.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-
+    // Update state template
     currentTemplate = btn.dataset.template;
 
+    // Atur jumlah foto
     if (currentTemplate === 'multi-grid') maxFrames = 4;
     else if (currentTemplate === 'multi-film-6') maxFrames = 6;
     else maxFrames = 1;
 
+    // Reset sesi photobooth
     resetApp();
 
+    // status pengambilan foto
     if (maxFrames > 1) {
       statusText.style.display = 'inline-block';
       statusText.textContent = `SHOT 1 / ${maxFrames}`;
@@ -223,23 +208,25 @@ templateBtns.forEach(btn => {
   });
 });
 
-/* FILTER */
+// Pilih Efek RGB
 effectBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     effectBtns.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+    // Update state filter
     currentEffect = btn.dataset.effect;
   });
 });
 
-/* COLOR */
+// Pilih Warna Frame
 colorBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     colorBtns.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-
+    // Update state warna
     currentColor = btn.dataset.color;
-
+    
+    // Render ulang hasil foto (jika sudah diambil)
     if (isCaptured) {
       if (currentTemplate === 'none') {
         drawSingle(ctx, canvas.width, canvas.height, singleShot, currentColor);
