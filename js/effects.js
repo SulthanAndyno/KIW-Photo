@@ -1,5 +1,5 @@
 // Batasi nilai RGB 0–255
-function clamp(v) {
+function clamp(v) { //penjaga validitas citra digital
   return Math.max(0, Math.min(255, v));
 }
 
@@ -9,7 +9,7 @@ function lerp(a, b, t) {
 }
 
 // Hitung luminance (0–1) Rumus luminance standar (Relative Luminance – Rec. 709 / sRGB)
-function luminanceNorm(r, g, b) {
+function luminanceNorm(r, g, b) { //kecerahan yang dirasakan mata manusia
   return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
 }
 
@@ -59,7 +59,7 @@ export function applyJsFilter(imageData, effectType) {
 
   switch (effectType) {
 
-    // Hitam putih
+    // Bnw 
     case 'grayscale': {
       for (let i = 0; i < data.length; i += 4) {
         const g =
