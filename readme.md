@@ -3,9 +3,9 @@
 > **Capture the Moment.**  
 > Aplikasi Photobooth web estetik dengan gaya Cyberpunk, filter real-time, dan layout frame otomatis.
 
-### 🌐 **Live Demo:** [KLIK DI SINI UNTUK COBA](MASUKKAN_LINK_NETLIFY_KAMU_DISINI)
+### 🌐 **Live Demo:** [KLIK DI SINI UNTUK COBA](kiw-photo.netlify.app)
 
-![Preview KIW PHOTO](https://via.placeholder.com/1280x640.png?text=PREVIEW+KIW+PHOTO)
+![Preview KIW PHOTO](assets/landingPage.png)
 *(Ganti link gambar di atas dengan screenshot aplikasimu)*
 
 ---
