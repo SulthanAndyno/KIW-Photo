@@ -1,9 +1,3 @@
-Sip, ini dia versi **FINAL** yang siap kamu copy-paste (**coaps**).
-
-Aku sudah siapin *placeholder* untuk link Netlify dan gambar preview-nya. Kamu tinggal ganti teks yang ada di dalam kurung siku `[...]` nanti.
-
-***
-
 # 📸 KIW PHOTO
 
 > **Capture the Moment.**  
