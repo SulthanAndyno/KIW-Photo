@@ -57,18 +57,10 @@ kiw-photo/
 
 ## 💻 Cara Menjalankan di Lokal
 
-Karena project ini menggunakan **ES Modules** dan **Akses Kamera**, kamu butuh local server. Tidak bisa hanya double-click `index.html`.
-
-**Opsi 1: VS Code (Paling Mudah)**
+Karena project ini menggunakan **ES Modules** dan **Akses Kamera**, user butuh local server. Tidak bisa hanya double-click `index.html`.
 1.  Install extension **Live Server**.
 2.  Klik kanan `index.html` > Pilih **Open with Live Server**.
 
-**Opsi 2: Python**
-Buka terminal di folder project, lalu ketik:
-```bash
-python -m http.server 8000
-```
-Buka browser di `http://localhost:8000`.
 
 ## ☁️ Deployment
 
@@ -76,9 +68,11 @@ Project ini sudah dideploy menggunakan **Netlify**.
 
 Netlify dipilih karena menyediakan **HTTPS** secara otomatis. Ini sangat penting karena browser modern memblokir akses kamera jika website tidak menggunakan HTTPS (kecuali di localhost).
 
-**Developed by **
-Sulthan H. Andyno
-Muhammad Zulfan Aulia
-Fariz Rinovada Naya
+
+**Developed by**
+---
+* Sulthan H. Andyno
+* Muhammad Zulfan Aulia
+* Fariz Rinovada Naya
 
 **© 2025 — KIW PHOTO**
