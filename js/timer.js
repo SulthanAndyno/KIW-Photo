@@ -1,6 +1,4 @@
-// timer.js
 // Modul countdown reusable: initTimer(), countdown(sec), cancelCountdown(), isCounting()
-
 let state = {
   active: false,
   interval: null,
@@ -14,7 +12,7 @@ function ensureHUD(hudSelector = '#countdown-hud', numSelector = '#count-num') {
   let hud = document.querySelector(hudSelector);
   let num = document.querySelector(numSelector);
 
-  // Kalau elemen HUD belum ada, bikin otomatis & taruh di .photobooth (fallback: body)
+  // Kalau elemen HUD belum ada, buat otomatis & taruh di .photobooth (fallback: body)
   if (!hud) {
     hud = document.createElement('div');
     hud.id = 'countdown-hud';
