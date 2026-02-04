@@ -76,5 +76,9 @@ Project ini sudah dideploy menggunakan **Netlify**.
 
 Netlify dipilih karena menyediakan **HTTPS** secara otomatis. Ini sangat penting karena browser modern memblokir akses kamera jika website tidak menggunakan HTTPS (kecuali di localhost).
 
+**Developed by **
+Sulthan H. Andyno
+Muhammad Zulfan Aulia
+Fariz Rinovada Naya
 
 **© 2025 — KIW PHOTO**
