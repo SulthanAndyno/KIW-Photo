@@ -6,7 +6,6 @@
 ### 🌐 **Live Demo:** [KLIK DI SINI UNTUK COBA](kiw-photo.netlify.app)
 
 ![Preview KIW PHOTO](assets/landingPage.png)
-*(Ganti link gambar di atas dengan screenshot aplikasimu)*
 
 ---
 
