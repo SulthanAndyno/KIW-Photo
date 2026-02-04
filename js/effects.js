@@ -1,116 +1,131 @@
-function clamp(v){ return v < 0 ? 0 : (v > 255 ? 255 : v); }
+// Batasi nilai RGB 0–255
+function clamp(v) {
+  return Math.max(0, Math.min(255, v));
+}
 
-/** linear interpolate between a and b by t */
-function lerp(a, b, t){ return a + (b - a) * t; }
+// Interpolasi linear
+function lerp(a, b, t) {
+  return a + (b - a) * t;
+}
 
-/** interpolate color stops (rgba arrays) along t in [0,1] */
-function sampleGradient(stops, t){
-  if (t <= 0) return stops[0].slice();
-  if (t >= 1) return stops[stops.length-1].slice();
-  const pos = t * (stops.length - 1);
+// Hitung luminance (0–1) Rumus luminance standar (Relative Luminance – Rec. 709 / sRGB)
+function luminanceNorm(r, g, b) {
+  return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+}
+
+// Ambil warna dari gradient
+function sampleGradient(stops, t) {
+  const tt = Math.max(0, Math.min(1, t));
+  const max = stops.length - 1;
+  const pos = tt * max;
+
   const i = Math.floor(pos);
-  const localT = pos - i;
-  const c0 = stops[i], c1 = stops[i+1];
+  const lt = pos - i;
+
+  const c0 = stops[i];
+  const c1 = stops[i + 1] || c0;
+
   return [
-    Math.round(lerp(c0[0], c1[0], localT)),
-    Math.round(lerp(c0[1], c1[1], localT)),
-    Math.round(lerp(c0[2], c1[2], localT)),
-    Math.round(lerp((c0[3]||255), (c1[3]||255), localT))
+    Math.round(lerp(c0[0], c1[0], lt)),
+    Math.round(lerp(c0[1], c1[1], lt)),
+    Math.round(lerp(c0[2], c1[2], lt)),
   ];
 }
 
-/** Thermal Neon gradient inspired by your sample:
- *  deep blue -> cyan -> green -> yellow -> red -> magenta
- *  each stop is [r,g,b,a]
- */
-const THERMAL_NEON_STOPS = [
-  [6,  10,  80, 255],   // deep blue / shadow
-  [20, 120, 220, 255],  // cyan
-  [40, 220, 120, 255],  // green
-  [240, 230, 40, 255],  // yellow
-  [255, 60,  30, 255],  // red
-  [220, 20, 160, 255]   // magenta / highlight edge
+// thermal neon config
+
+const THERMAL_NEON_GRADIENT = [
+  [10, 10, 80],     // Biru gelap (dingin)
+  [30, 120, 220],   // Cyan
+  [60, 220, 140],   // Hijau
+  [240, 230, 60],   // Kuning
+  [255, 80, 40],    // Merah
+  [220, 40, 160],   // Magenta (panas ekstrem)
 ];
 
-/** small helper to compute perceived luminance 0..1 */
-function luminanceNorm(r,g,b){
-  // use rec.709 luma
-  return (0.2126*r + 0.7152*g + 0.0722*b) / 255;
-}
+// pengaturan efek Thermal–Neon
+const THERMAL_SETTINGS = {
+  contrast: 1.12,               // Peningkatan Kontras
+  saturationBoost: 1.08,       // Boost Saturasi warna
+  preserveOriginal: 0.18,     // Menjaga detail warna asli
+};
 
-/** apply js filter to ImageData in-place */
-export function applyJsFilter(imageData, effectType){
-  const data = imageData.data;
+// main filter
+
+export function applyJsFilter(imageData, effectType) {
   if (!effectType || effectType === 'none') return;
 
-  const len = data.length;
-  switch(effectType){
-    // B&W / Grayscale
+  const data = imageData.data;
+
+  switch (effectType) {
+
+    // Hitam putih
     case 'grayscale': {
-      for (let i=0;i<len;i+=4){
-        const r = data[i], g = data[i+1], b = data[i+2];
-        const gray = Math.round(0.299*r + 0.587*g + 0.114*b);
-        data[i]=data[i+1]=data[i+2]=gray;
+      for (let i = 0; i < data.length; i += 4) {
+        const g =
+          0.299 * data[i] +
+          0.587 * data[i + 1] +
+          0.114 * data[i + 2];
+
+        data[i] = data[i + 1] = data[i + 2] = g;
       }
       break;
     }
-    // Invert Colors
+
+    // Invert warna
     case 'invert': {
-      for (let i=0;i<len;i+=4){
-        data[i] = 255 - data[i];
-        data[i+1] = 255 - data[i+1];
-        data[i+2] = 255 - data[i+2];
+      for (let i = 0; i < data.length; i += 4) {
+        data[i]     = 255 - data[i];
+        data[i + 1] = 255 - data[i + 1];
+        data[i + 2] = 255 - data[i + 2];
       }
       break;
     }
-    // Thermal Neon Effect
+
+    // Thermal Neon
     case 'thermal-neon': {
+      const { contrast, saturationBoost, preserveOriginal } = THERMAL_SETTINGS;
 
-      const contrastFactor = 1.12; // >1 increases contrast slightly
-      const satBoost = 1.08;       // >1 boost saturation a bit
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
 
-      for (let i=0;i<len;i+=4){
-        const r = data[i], g = data[i+1], b = data[i+2];
+        // Luminance
+        let L = luminanceNorm(r, g, b);
 
-        // 1) get luminance normalized
-        let L = luminanceNorm(r,g,b);
+        // Kontras
+        L = ((L - 0.5) * contrast) + 0.5;
+        L = Math.max(0, Math.min(1, L));
 
-        // 2) small contrast tweak around 0.5
-        L = ((L - 0.5) * contrastFactor) + 0.5;
-        if (L < 0) L = 0; if (L > 1) L = 1;
+        // Mapping ke warna thermal
+        let [tr, tg, tb] = sampleGradient(
+          THERMAL_NEON_GRADIENT,
+          L
+        );
 
-        // 3) sample gradient color
-        let col = sampleGradient(THERMAL_NEON_STOPS, L); // [r,g,b,a]
+        // Jaga detail warna
+        const maxW = Math.max(r, g, b);
+        const minW = Math.min(r, g, b);
+        const sat = (maxW - minW) / (maxW || 1);
 
-        // 4) optional: slightly modulate by original color to keep facial detail
-        // compute a simple color-preserve blend factor from original saturation
-        const maxc = Math.max(r,g,b), minc = Math.min(r,g,b);
-        const sat = (maxc - minc) / (maxc || 1); // 0..1
-        const preserve = 0.18 * sat; // how much original color to mix back (small)
-        if (preserve > 0){
-          col[0] = Math.round(lerp(col[0], r, preserve));
-          col[1] = Math.round(lerp(col[1], g, preserve));
-          col[2] = Math.round(lerp(col[2], b, preserve));
-        }
+        const mix = preserveOriginal * sat;
+        tr = lerp(tr, r, mix);
+        tg = lerp(tg, g, mix);
+        tb = lerp(tb, b, mix);
 
-        // 5) tiny saturation boost on the sampled color
-        // convert to hsl-ish quick approx: scale distance from gray
-        const avg = (col[0]+col[1]+col[2]) / 3;
-        col[0] = Math.round(lerp(avg, col[0], satBoost));
-        col[1] = Math.round(lerp(avg, col[1], satBoost));
-        col[2] = Math.round(lerp(avg, col[2], satBoost));
+        // Boost warna
+        const avg = (tr + tg + tb) / 3;
+        tr = lerp(avg, tr, saturationBoost);
+        tg = lerp(avg, tg, saturationBoost);
+        tb = lerp(avg, tb, saturationBoost);
 
-        // write back
-        data[i]   = clamp(col[0]);
-        data[i+1] = clamp(col[1]);
-        data[i+2] = clamp(col[2]);
-        // keep alpha as-is
+        // Simpan hasil
+        data[i]     = clamp(tr);
+        data[i + 1] = clamp(tg);
+        data[i + 2] = clamp(tb);
       }
-      break;
-    }
 
-    default: {
-      // unknown effect: do nothing
       break;
     }
   }
