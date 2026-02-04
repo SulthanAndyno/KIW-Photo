@@ -1,4 +1,3 @@
-/** Util CSS var */
 function getCss(name){
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
@@ -39,7 +38,7 @@ function drawCover(ctx, imgData, dx, dy, dw, dh){
 /** 
  * 1. SINGLE FRAME (UPDATED: REAL FRAME LOOK)
  * - Frame tebal sesuai warna pilihan.
- * - Ada garis tepi (stroke) biar tegas.
+ * - Ada garis tepi (stroke).
  * - Efek shadow biar timbul.
  */
 export function drawSingle(ctx, W, H, imgData, color) {
@@ -77,7 +76,7 @@ export function drawSingle(ctx, W, H, imgData, color) {
   ctx.shadowOffsetY = 0;
 
   // 5. Inner Border (Garis Tepi)
-  // Ini kunci biar frame-nya kelihatan "niat". Garis tipis mengelilingi foto.
+  // Ini kunci biar frame-nya kelihatan. Garis tipis mengelilingi foto.
   ctx.lineWidth = W * 0.008; // Ketebalan garis
   ctx.strokeStyle = decorationColor; // Warnanya kontras (Hitam/Putih)
   ctx.strokeRect(ix, iy, iw, ih);
@@ -216,5 +215,4 @@ export function drawFilmRoll6(ctx, W, H, capturedFrames, liveIndex, liveFrame, f
   ctx.fillStyle = decorationColor;
   ctx.font = `bold ${W * 0.018}px monospace`;
   ctx.textAlign = 'right';
-  // ctx.fillText("400SNAP PRO ", stripX + stripW - gap - holeW, stripY + stripH - (sprocketAreaH / 3));
 }
