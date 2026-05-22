@@ -411,11 +411,7 @@ button:disabled{opacity:.6;cursor:not-allowed;}
   margin-top: 6px;
 }
 
-
-/* =========================================
-   FOOTER
-========================================= */
-
+/* footer */
 .watermark {
   width: 100%;
   padding: 20px 10px;
