@@ -351,12 +351,12 @@ button:disabled{opacity:.6;cursor:not-allowed;}
 .download-btn,#reset-btn{min-width:140px;}
 
 /* Watermark */
-.watermark{
+/* .watermark{
   position:fixed;
   right:14px;
   bottom:10px;
   opacity:.55;
-}
+} */
 
 /* Countdown HUD */
 .countdown-hud {
@@ -411,8 +411,12 @@ button:disabled{opacity:.6;cursor:not-allowed;}
   margin-top: 6px;
 }
 
-/* footer */
+/* FOOTER */
 .watermark {
+  position: relative;
+  right: auto;
+  bottom: auto;
+
   width: 100%;
   padding: 20px 10px;
   margin-top: 30px;
@@ -473,7 +477,7 @@ button:disabled{opacity:.6;cursor:not-allowed;}
 }
 
 /* Mobile */
-@media (max-width: 768px){
+@media (max-width:768px){
 
   .footer-dev{
     flex-direction:column;
